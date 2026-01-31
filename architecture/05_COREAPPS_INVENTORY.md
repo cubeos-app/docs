@@ -451,7 +451,7 @@ services:
 - [ ] Delete `gpio/` directory
 - [ ] Delete `nettools/` directory
 - [ ] Delete `usb-monitor/` directory
-- [ ] Remove any MuleCube references
+- [x] Remove any MuleCube references
 
 ### Phase 2: Restructure
 - [ ] Rename `orchestrator/` to `cubeos-api/`

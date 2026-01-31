@@ -38,7 +38,7 @@
 | S0-09 | Update subnet to 10.42.24.0/24 in all configs | 1h | TODO |
 | S0-10 | Update all ports to new scheme | 1h | TODO |
 | S0-11 | Create defaults.env template | 30m | TODO |
-| S0-12 | Remove MuleCube references from code | 1h | TODO |
+| S0-12 | Remove MuleCube references from code | 1h | DONE |
 | S0-13 | Update CI/CD for separated api/dashboard | 1h | TODO |
 
 ### Deliverables
