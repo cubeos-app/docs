@@ -23,7 +23,6 @@ CubeOS transforms single-board computers like Raspberry Pi into powerful, easy-t
 | Dashboard | http://cubeos.cube | admin / cubeos |
 | Pi-hole | http://pihole.cubeos.cube/admin | cubeos |
 | NPM | http://npm.cubeos.cube | cubeos@cubeos.app / cubeos123 |
-| Dockge | http://dockge.cubeos.cube | (same as dashboard) |
 | Logs | http://logs.cubeos.cube | (no auth) |
 
 ## System Requirements
@@ -32,6 +31,26 @@ CubeOS transforms single-board computers like Raspberry Pi into powerful, easy-t
 - 16GB+ microSD card or USB storage
 - Power supply (official recommended)
 - Ethernet cable (optional, has WiFi AP)
+
+## Network
+
+CubeOS operates on the `10.42.24.0/24` subnet with the domain `cubeos.cube`.
+
+| Setting | Value |
+|---------|-------|
+| Gateway | 10.42.24.1 |
+| DNS | 10.42.24.1 (Pi-hole) |
+| DHCP Range | 10.42.24.10 - 10.42.24.250 |
+| Domain | cubeos.cube |
+
+## Architecture
+
+Architecture documentation is in [architecture/](architecture/):
+- [Project Overview](architecture/00_PROJECT_OVERVIEW.md)
+- [Architecture](architecture/02_ARCHITECTURE.md)
+- [Database Schema](architecture/03_DATABASE_SCHEMA.md)
+- [Boot Sequence](architecture/04_BOOT_SEQUENCE.md)
+- [API Contracts](architecture/07_API_CONTRACTS.md)
 
 ## Support
 

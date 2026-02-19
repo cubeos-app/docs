@@ -1,0 +1,12 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Session artifacts (belong in project knowledge, not source control)
+*HANDOVER*.md
+*SESSION*.md

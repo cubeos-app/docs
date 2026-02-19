@@ -20,9 +20,9 @@ Internet ─── Router ─── Ethernet ─── CubeOS Pi
 |---------|-------|
 | WiFi SSID | CubeOS-XXXX |
 | WiFi Password | (on device label) |
-| IP Range | 192.168.42.1 - 192.168.42.254 |
-| Gateway | 192.168.42.1 |
-| DNS Server | 192.168.42.1 (Pi-hole) |
+| IP Range | 10.42.24.1 - 10.42.24.254 |
+| Gateway | 10.42.24.1 |
+| DNS Server | 10.42.24.1 (Pi-hole) |
 
 ## WiFi Configuration
 
@@ -56,9 +56,9 @@ The default channel is auto-selected. To change:
 
 CubeOS runs Pi-hole which provides DHCP. Devices connecting to the WiFi automatically receive:
 
-- IP address (192.168.42.x)
-- Gateway (192.168.42.1)
-- DNS server (192.168.42.1)
+- IP address (10.42.24.x)
+- Gateway (10.42.24.1)
+- DNS server (10.42.24.1)
 
 ### Viewing Connected Devices
 
@@ -152,7 +152,7 @@ netfilter-persistent save
 ### DNS Not Resolving
 
 1. Check Pi-hole is running: `docker ps | grep pihole`
-2. Test DNS: `nslookup google.com 192.168.42.1`
+2. Test DNS: `nslookup google.com 10.42.24.1`
 3. Restart Pi-hole: `docker restart cubeos-pihole`
 
 ### Can't Connect to WiFi

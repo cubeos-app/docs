@@ -35,7 +35,7 @@ nslookup cubeos.cube          # DNS resolution
    - Should be connected to "CubeOS-XXXX"
 
 2. **Try IP address directly**
-   - Go to http://192.168.42.1
+   - Go to http://10.42.24.1
    - If this works, DNS issue (see below)
 
 3. **Check API container**
@@ -53,7 +53,7 @@ nslookup cubeos.cube          # DNS resolution
 
 ### DNS Not Working
 
-**Symptoms:** Can reach 192.168.42.1 but not cubeos.cube
+**Symptoms:** Can reach 10.42.24.1 but not cubeos.cube
 
 **Solutions:**
 
@@ -65,7 +65,7 @@ nslookup cubeos.cube          # DNS resolution
 
 2. **Test DNS directly**
    ```bash
-   nslookup cubeos.cube 192.168.42.1
+   nslookup cubeos.cube 10.42.24.1
    ```
 
 3. **Flush DNS cache on your device**
@@ -200,7 +200,7 @@ nslookup cubeos.cube          # DNS resolution
 
 1. **SSH into the Pi** (if SSH is enabled)
    ```bash
-   ssh root@192.168.42.1
+   ssh root@10.42.24.1
    ```
 
 2. **Reset password in database**

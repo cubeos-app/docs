@@ -4,7 +4,7 @@
 
 ### How do I access the CubeOS dashboard?
 
-Connect to the CubeOS WiFi network (named CubeOS-XXXX), then open http://cubeos.cube in your browser. Alternatively, use http://192.168.42.1.
+Connect to the CubeOS WiFi network (named CubeOS-XXXX), then open http://cubeos.cube in your browser. Alternatively, use http://10.42.24.1.
 
 ### What are the default login credentials?
 
@@ -35,10 +35,10 @@ Go to Dashboard → Network → WiFi, enter a new password, and click Save. You'
 
 ### How do I add a new app?
 
-Use Dockge at http://dockge.cubeos.cube:
-1. Click "+ Compose"
-2. Paste your docker-compose.yml
-3. Click "Deploy"
+Use the Dashboard at http://cubeos.cube:
+1. Go to **Apps**
+2. Browse available applications or use the App Store
+3. Click **Install**
 
 ### How do I restart a service?
 
@@ -134,7 +134,7 @@ Or reflash the SD card for a fresh start.
 ### The dashboard won't load
 
 1. Make sure you're connected to CubeOS WiFi
-2. Try http://192.168.42.1 instead of http://cubeos.cube
+2. Try http://10.42.24.1 instead of http://cubeos.cube
 3. Clear your browser cache
 4. Check if API is running: `docker ps | grep api`
 
@@ -156,7 +156,7 @@ Or reflash the SD card for a fresh start.
 
 1. Make sure you're on CubeOS WiFi (not your home network)
 2. DNS is provided by Pi-hole - check it's running
-3. Try the IP directly: http://192.168.42.1
+3. Try the IP directly: http://10.42.24.1
 
 ## Backup & Recovery
 

@@ -1,12 +1,12 @@
 # Services Guide
 
-CubeOS runs applications as Docker containers. This guide explains how to manage them.
+CubeOS runs applications as Docker containers managed by Docker Swarm. This guide explains how to manage them.
 
 ## Pre-installed Services
 
 ### Pi-hole (DNS & DHCP)
 
-**URL**: http://pihole.cubeos.cube/admin  
+**URL**: http://pihole.cubeos.cube/admin
 **Password**: cubeos
 
 Pi-hole blocks ads and trackers at the network level. All devices connected to CubeOS WiFi automatically use Pi-hole for DNS.
@@ -19,23 +19,13 @@ Features:
 
 ### Nginx Proxy Manager (NPM)
 
-**URL**: http://npm.cubeos.cube  
+**URL**: http://npm.cubeos.cube
 **Login**: cubeos@cubeos.app / cubeos123
 
 NPM manages reverse proxies for all services. It handles:
 - Subdomain routing (pihole.cubeos.cube, etc.)
 - SSL certificates (Let's Encrypt)
 - Access control
-
-### Dockge (Container Manager)
-
-**URL**: http://dockge.cubeos.cube
-
-Dockge provides a visual interface for managing Docker Compose stacks. Use it to:
-- Deploy new applications
-- Edit container configurations
-- View logs and stats
-- Start/stop containers
 
 ### Dozzle (Log Viewer)
 
@@ -57,12 +47,6 @@ Real-time log viewer for all containers. Features:
    - **Restart** - Restarts the container
    - **Stop** - Stops the container
    - **Logs** - View recent logs
-
-### From Dockge
-
-1. Go to http://dockge.cubeos.cube
-2. Click on a stack
-3. Use the controls to manage containers
 
 ### From Terminal
 
@@ -89,12 +73,11 @@ docker stop cubeos-ollama
 
 The built-in App Store will offer one-click installation of popular self-hosted apps.
 
-### Using Dockge
+### Using the Dashboard
 
-1. Go to http://dockge.cubeos.cube
-2. Click **+ Compose**
-3. Paste your docker-compose.yml
-4. Click **Deploy**
+1. Go to **Apps** in the Dashboard
+2. Browse available applications
+3. Click **Install** on the app you want
 
 ### Popular Apps to Self-Host
 
@@ -138,4 +121,4 @@ Tips for Raspberry Pi:
 
 1. Verify container is running: `docker ps`
 2. Check NPM proxy configuration
-3. Verify DNS: `nslookup service.cubeos.cube 192.168.42.1`
+3. Verify DNS: `nslookup service.cubeos.cube 10.42.24.1`

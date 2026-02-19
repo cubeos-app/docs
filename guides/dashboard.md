@@ -5,7 +5,7 @@ The CubeOS Dashboard is your central control panel for managing your server.
 ## Accessing the Dashboard
 
 - **URL**: http://cubeos.cube (when on CubeOS WiFi)
-- **Alternative**: http://192.168.42.1
+- **Alternative**: http://10.42.24.1
 - **Login**: admin / cubeos (change after first login!)
 
 ## Dashboard Sections

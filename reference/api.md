@@ -6,7 +6,7 @@ The CubeOS API provides programmatic access to all system functions.
 
 ```
 http://api.cubeos.cube/api/v1
-http://192.168.42.1:9009/api/v1
+http://10.42.24.1:6010/api/v1
 ```
 
 ## Authentication
@@ -249,16 +249,16 @@ http://api.cubeos.cube/api/v1/docs
 
 ```bash
 # Login
-TOKEN=$(curl -s -X POST http://192.168.42.1:9009/api/v1/auth/login \
+TOKEN=$(curl -s -X POST http://10.42.24.1:6010/api/v1/auth/login \
   -H "Content-Type: application/json" \
   -d '{"username":"admin","password":"cubeos"}' | jq -r '.access_token')
 
 # Get system stats
-curl -s http://192.168.42.1:9009/api/v1/system/stats \
+curl -s http://10.42.24.1:6010/api/v1/system/stats \
   -H "Authorization: Bearer $TOKEN" | jq
 
 # Restart a service
-curl -X POST http://192.168.42.1:9009/api/v1/services/cubeos-pihole/restart \
+curl -X POST http://10.42.24.1:6010/api/v1/services/cubeos-pihole/restart \
   -H "Authorization: Bearer $TOKEN"
 ```
 
@@ -268,13 +268,13 @@ curl -X POST http://192.168.42.1:9009/api/v1/services/cubeos-pihole/restart \
 import requests
 
 # Login
-resp = requests.post('http://192.168.42.1:9009/api/v1/auth/login',
+resp = requests.post('http://10.42.24.1:6010/api/v1/auth/login',
     json={'username': 'admin', 'password': 'cubeos'})
 token = resp.json()['access_token']
 
 # Get stats
 headers = {'Authorization': f'Bearer {token}'}
-stats = requests.get('http://192.168.42.1:9009/api/v1/system/stats',
+stats = requests.get('http://10.42.24.1:6010/api/v1/system/stats',
     headers=headers).json()
 print(stats)
 ```
@@ -282,14 +282,14 @@ print(stats)
 ### JavaScript
 
 ```javascript
-const login = await fetch('http://192.168.42.1:9009/api/v1/auth/login', {
+const login = await fetch('http://10.42.24.1:6010/api/v1/auth/login', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ username: 'admin', password: 'cubeos' })
 });
 const { access_token } = await login.json();
 
-const stats = await fetch('http://192.168.42.1:9009/api/v1/system/stats', {
+const stats = await fetch('http://10.42.24.1:6010/api/v1/system/stats', {
   headers: { 'Authorization': `Bearer ${access_token}` }
 }).then(r => r.json());
 ```

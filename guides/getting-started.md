@@ -54,7 +54,7 @@ All services are accessible via `.cubeos.cube` domains when connected to the Cub
 | Dashboard | http://cubeos.cube |
 | Pi-hole DNS | http://pihole.cubeos.cube/admin |
 | Proxy Manager | http://npm.cubeos.cube |
-| Container Manager | http://dockge.cubeos.cube |
+| Log Viewer | http://logs.cubeos.cube |
 | System Logs | http://logs.cubeos.cube |
 | Terminal | http://terminal.cubeos.cube |
 | API Docs | http://api.cubeos.cube/api/v1/docs |
@@ -70,7 +70,7 @@ All services are accessible via `.cubeos.cube` domains when connected to the Cub
 ### Can't access http://cubeos.cube
 
 - Make sure you're connected to the CubeOS WiFi, not your home WiFi
-- Try http://192.168.42.1 instead
+- Try http://10.42.24.1 instead
 - Clear your browser cache
 
 ### Login not working

@@ -30,7 +30,7 @@ A CubeOS backup includes:
 
 ```bash
 TOKEN="your-token"
-curl -X POST http://192.168.42.1:9009/api/v1/backup/create \
+curl -X POST http://10.42.24.1:6010/api/v1/backup/create \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"name": "my-backup", "include_docker_volumes": true}'
@@ -126,7 +126,7 @@ To keep backups off-device:
 ### Via SCP
 
 ```bash
-scp root@192.168.42.1:/cubeos/backups/backup-name.tar.gz ./
+scp root@10.42.24.1:/cubeos/backups/backup-name.tar.gz ./
 ```
 
 ## Uploading Backups
@@ -144,7 +144,7 @@ To restore from a backup file:
 ### Via SCP
 
 ```bash
-scp ./backup-name.tar.gz root@192.168.42.1:/cubeos/backups/
+scp ./backup-name.tar.gz root@10.42.24.1:/cubeos/backups/
 ```
 
 ## Best Practices
