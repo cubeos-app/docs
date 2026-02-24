@@ -8,13 +8,24 @@ CubeOS transforms single-board computers like Raspberry Pi into powerful, easy-t
 
 ## Quick Links
 
-- [Getting Started](guides/getting-started.md) - First-time setup
+### User Guides
+
+- [Getting Started](getting-started.md) - First-time setup from flash to first app
+- [Network Modes](network-modes.md) - OFFLINE, Ethernet, and WiFi connectivity
+- [Backup and Restore](backup-restore.md) - Backups, encryption, and recovery
+- [FAQ](faq.md) - Frequently asked questions
+
+### Reference
+
 - [Dashboard Guide](guides/dashboard.md) - Using the web interface
 - [Services Guide](guides/services.md) - Managing applications
-- [Network Guide](guides/network.md) - WiFi, DHCP, and DNS
-- [FAQ](faq/general.md) - Frequently asked questions
+- [Network Guide](guides/network.md) - WiFi, DHCP, and DNS configuration details
 - [Troubleshooting](guides/troubleshooting.md) - Common issues and solutions
 - [API Reference](reference/api.md) - REST API documentation
+
+### Developer
+
+- [Developer Guide](developer-guide.md) - Building from source, contributing, custom apps
 
 ## Default Access
 
