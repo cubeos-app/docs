@@ -22,11 +22,12 @@ Both files are currently identical (1,338 lines, version `0.2.0-beta.01`).
 ```
 releases/curl/install.sh    (source of truth)
         │
-        │  ❶ Manual copy
+        │  ❶ Automatic — releases CI "sync-installer" job
+        │    (clones website repo, copies file, commits + pushes if changed)
         ▼
 website/static/install.sh   (serving copy in website repo)
         │
-        │  ❷ git push to website/main
+        │  ❷ Automatic — website CI triggers on push to main
         ▼
 website CI pipeline (.gitlab-ci.yml)
    ├─ build:   Hugo --minify → public/install.sh (from static/)
@@ -45,13 +46,16 @@ DMZ server (nllei01dmz01)
 ### Step-by-step
 
 1. **Edit** `releases/curl/install.sh` (the source of truth in the releases repo).
-2. **Copy** the updated file to `website/static/install.sh`.
-3. **Commit and push** the website repo to `main`.
-4. Website CI triggers automatically:
+2. **Commit and push** to `releases/main`.
+3. Releases CI `sync-installer` job runs automatically:
+   - Clones the website repo using `GITLAB_TOKEN`
+   - Copies `curl/install.sh` → `website/static/install.sh`
+   - Commits and pushes only if the file changed (no-op otherwise)
+4. Website CI triggers automatically on the push:
    - **build** stage: Hugo builds static site, copies `static/install.sh` → `public/install.sh`
    - **docker** stage: Docker image built with `public/` baked in, pushed to GHCR
    - **deploy** stage: AWX job pulls new image on DMZ, restarts the website container
-5. Live at `https://get.cubeos.app` within ~3 minutes of push.
+5. Live at `https://get.cubeos.app` within ~5 minutes of push to releases.
 
 ## Content Negotiation (nginx)
 
@@ -81,44 +85,33 @@ The releases repo's `upload-releases` job (triggered on **tag push** `v*`) handl
 | `rpi-imager.json` | Same release directory |
 | Channel JSON (`beta.json`, etc.) | `/srv/cubeos-website/data/channels/` |
 
-**NOT uploaded by the releases pipeline:**
-- `install.sh` — this is NOT part of `upload-to-releases-server.sh`
-- The install script is only updated when the **website** repo is pushed
+**Synced separately (on every push to main, not just tags):**
+- `install.sh` — the `sync-installer` job copies it to the website repo automatically
+- NOT part of `upload-to-releases-server.sh` — handled by its own CI job
 
-## How to Manually Publish a New Version
+## How to Publish a New Version
 
 ### Update install.sh content (bug fix, new feature)
 
 ```bash
-# 1. Edit source of truth
+# Edit source of truth, commit, and push — sync is automatic
 cd releases
 vim curl/install.sh
 git add curl/install.sh && git commit -m "fix: installer XYZ"
 git push origin main
-
-# 2. Copy to website
-cp curl/install.sh ../website/static/install.sh
-cd ../website
-git add static/install.sh && git commit -m "fix: sync install.sh from releases"
-git push origin main
-# Pipeline auto-deploys to get.cubeos.app
+# sync-installer CI job copies to website repo → website CI redeploys
 ```
 
 ### Bump CUBEOS_VERSION for a new release
 
 ```bash
-# 1. Update version in releases/curl/install.sh (lines 10-11)
+# Update version in releases/curl/install.sh (lines 10-11)
 cd releases
 sed -i 's/CUBEOS_INSTALLER_VERSION=.*/CUBEOS_INSTALLER_VERSION="X.Y.Z"/' curl/install.sh
 sed -i 's/CUBEOS_VERSION=.*/CUBEOS_VERSION="X.Y.Z"/' curl/install.sh
 git add curl/install.sh && git commit -m "feat: bump installer to vX.Y.Z"
 git push origin main
-
-# 2. Copy to website and push
-cp curl/install.sh ../website/static/install.sh
-cd ../website
-git add static/install.sh && git commit -m "feat: sync install.sh vX.Y.Z"
-git push origin main
+# sync-installer CI job copies to website repo → website CI redeploys
 ```
 
 ### Verify the live version
@@ -150,16 +143,11 @@ substitution from CI variables or channel metadata at build time.
 
 ## Gaps and Risks
 
-### 1. Manual Copy Between Repos (HIGH)
+### ~~1. Manual Copy Between Repos~~ — RESOLVED
 
-The install.sh sync from `releases/` to `website/` is entirely manual. There is no CI job,
-git submodule, or webhook that propagates changes. If someone updates `releases/curl/install.sh`
-and forgets to copy it to `website/static/install.sh`, the live installer will be stale.
-
-**Mitigation options:**
-- Add a CI job in releases that triggers the website pipeline with the updated file
-- Use a git submodule or artifact download in the website build
-- Add a CI check that compares the two files and fails if they diverge
+The `sync-installer` CI job in `releases/.gitlab-ci.yml` now automatically copies
+`curl/install.sh` to `website/static/install.sh` on every push to `releases/main`.
+The job is a no-op when the file hasn't changed (uses `git diff --staged --quiet` guard).
 
 ### 2. Hardcoded Version Strings (MEDIUM)
 
@@ -190,4 +178,4 @@ silently break the install path.
 | `scripts/upload-to-releases-server.sh` | releases | Uploads images + CLI to DMZ (not install.sh) |
 | `scripts/update-channels.sh` | releases | Updates channel JSON on DMZ website |
 | `.gitlab-ci.yml` | website | Hugo → GHCR → AWX deploy pipeline |
-| `.gitlab-ci.yml` | releases | Image builds, releases, uploads |
+| `.gitlab-ci.yml` | releases | Image builds, releases, uploads, install.sh sync |
