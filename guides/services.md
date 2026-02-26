@@ -69,15 +69,9 @@ docker stop cubeos-ollama
 
 ## Installing New Apps
 
-### Using the App Store (Coming Soon)
+### Using the App Store
 
-The built-in App Store will offer one-click installation of popular self-hosted apps.
-
-### Using the Dashboard
-
-1. Go to **Apps** in the Dashboard
-2. Browse available applications
-3. Click **Install** on the app you want
+The built-in App Store offers one-click installation of curated self-hosted apps. See the **[App Store Guide](app-store.md)** for the complete walkthrough — browsing, installing, offline apps, managing, and removing.
 
 ### Popular Apps to Self-Host
 

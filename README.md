@@ -18,6 +18,7 @@ CubeOS transforms single-board computers like Raspberry Pi into powerful, easy-t
 ### Reference
 
 - [Dashboard Guide](guides/dashboard.md) - Using the web interface
+- [App Store Guide](guides/app-store.md) - Browsing, installing, and managing apps
 - [Services Guide](guides/services.md) - Managing applications
 - [Network Guide](guides/network.md) - WiFi, DHCP, and DNS configuration details
 - [Troubleshooting](guides/troubleshooting.md) - Common issues and solutions
