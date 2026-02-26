@@ -1,32 +1,30 @@
 # Network Modes
 
-CubeOS supports three network operating modes, letting you deploy your server in any environment -- from a fully air-gapped field station to a home office with wired internet.
+CubeOS supports six network modes that control how your device connects to the internet and how clients reach the dashboard. You choose a mode during the setup wizard and can switch at any time from the dashboard without reinstalling.
 
-## Table of Contents
+Modes fall into two categories:
 
-- [Overview](#overview)
-- [OFFLINE Mode](#offline-mode)
-- [ONLINE_ETH Mode (Ethernet Uplink)](#online_eth-mode-ethernet-uplink)
-- [ONLINE_WIFI Mode (WiFi Dongle Uplink)](#online_wifi-mode-wifi-dongle-uplink)
-- [Switching Modes](#switching-modes)
-- [Technical Details](#technical-details)
-- [Troubleshooting](#troubleshooting)
+- **AP modes** -- CubeOS broadcasts its own WiFi access point and owns the `10.42.24.0/24` subnet. Clients connect to the CubeOS WiFi network. Pi-hole provides DHCP.
+- **Client modes** -- CubeOS joins an existing network as a regular device. No access point, no DHCP. Dashboard is accessed via the device's assigned IP or `cubeos.local`.
 
 ---
 
 ## Overview
 
-All three modes share one thing in common: CubeOS always runs a WiFi access point. Client devices (phones, laptops, tablets) connect to this access point to reach the dashboard and all installed apps. The difference between modes is where internet comes from -- or whether it's available at all.
+| Code | Display Name | AP? | Internet Via | Pi-hole DHCP | Dashboard Access |
+|------|-------------|:---:|-------------|:------------:|-----------------|
+| `offline_hotspot` | Offline Hotspot | Yes | None | ON | `cubeos.cube` / `10.42.24.1` |
+| `wifi_router` | WiFi Router | Yes | Ethernet cable | ON | `cubeos.cube` / `10.42.24.1` |
+| `wifi_bridge` | WiFi Bridge | Yes | 2nd WiFi adapter | ON | `cubeos.cube` / `10.42.24.1` |
+| `android_tether` | Android Tether | Yes | USB-tethered phone | ON | `cubeos.cube` / `10.42.24.1` |
+| `wifi_client` | WiFi Client | No | WiFi (same card) | OFF | `cubeos.local` / DHCP IP |
+| `eth_client` | Ethernet Client | No | Ethernet cable | OFF | `cubeos.local` / DHCP IP |
 
-| Mode | Internet Source | WiFi AP | Use Case |
-|------|----------------|---------|----------|
-| **OFFLINE** | None | Active | Field, air-gapped, secure |
-| **ONLINE_ETH** | Ethernet cable | Active | Home, office, wired network |
-| **ONLINE_WIFI** | USB WiFi adapter | Active | Mobile, no Ethernet available |
+---
 
-You choose a mode during the setup wizard, and you can switch modes at any time from the dashboard without reinstalling anything.
+## Mode Descriptions
 
-## OFFLINE Mode
+### offline_hotspot -- Offline Hotspot
 
 ```
                     WiFi AP (wlan0)
@@ -34,144 +32,329 @@ You choose a mode during the setup wizard, and you can switch modes at any time 
 [Raspberry Pi] ----  Client Phone
                    \
                     Client Laptop
+
+No internet connection.
 ```
 
-### What It Does
+**What it does:** CubeOS creates a WiFi access point with no internet connectivity. The device operates as a fully self-contained server. All services -- dashboard, apps, DNS, file sharing -- work locally.
 
-CubeOS creates a WiFi access point with no internet connectivity. The Pi operates as a fully self-contained server. All services -- dashboard, apps, DNS, file sharing -- work locally without any external connection.
+**When to use it:**
+- Field deployments, expeditions, outdoor events
+- Air-gapped or secure environments
+- Classrooms and isolated lab setups
+- Off-grid locations with no internet
 
-### When to Use It
+**Requirements:** Built-in WiFi radio (standard on all Raspberry Pi models).
 
-- **Field deployments**: Expeditions, remote sites, outdoor events
-- **Emergency response**: Disaster relief communication hubs
-- **Secure environments**: Air-gapped networks, classified facilities
-- **Classrooms**: Isolated lab environments for teaching
-- **Off-grid**: Locations with no internet infrastructure
+**Pi-hole DHCP:** ON. Clients receive addresses in `10.42.24.10` - `10.42.24.250`.
 
-### How It Works
+**How to switch:** Dashboard > Network > select Offline Hotspot > Confirm. Takes effect immediately.
 
-1. `hostapd` creates a WiFi access point on the Pi's built-in WiFi radio (`wlan0`).
-2. Pi-hole serves as DNS and DHCP server for all connected clients.
-3. Clients receive an IP address in the `10.42.24.10 - 10.42.24.250` range.
-4. All `*.cubeos.cube` domains resolve to `10.42.24.1` (the Pi).
-5. No NAT rules, no upstream routing.
+**Caveats:**
+- No app installation from remote registries (local registry images only).
+- No system updates or NTP time sync (uses local clock).
+- External domains return NXDOMAIN -- only `*.cubeos.cube` resolves.
+- This is the default mode on first boot and the safe fallback if any other mode fails.
 
-### What Works Offline
+---
 
-- Web dashboard and all management functions
-- All installed apps
-- DNS resolution for `.cubeos.cube` domains
-- App installation from the local Docker registry (pre-loaded images)
-- Backups to USB drives
-
-### What Requires Internet
-
-- Installing apps from remote registries
-- System updates
-- NTP time synchronization (system uses local clock)
-- Accessing external websites from connected clients
-
-## ONLINE_ETH Mode (Ethernet Uplink)
+### wifi_router -- WiFi Router
 
 ```
-[Internet] <-- Ethernet --> [Raspberry Pi] <-- WiFi AP --> Clients
-                (eth0)                         (wlan0)
+[Internet] <-- Ethernet (eth0) --> [Raspberry Pi] <-- WiFi AP (wlan0) --> Clients
+               cable uplink                           built-in WiFi
 ```
 
-### What It Does
+**What it does:** CubeOS connects to the internet via an Ethernet cable and broadcasts a WiFi access point. Internet is shared with all WiFi clients through NAT.
 
-CubeOS connects to the internet via an Ethernet cable while continuing to broadcast a WiFi access point. Internet access is shared with all WiFi clients through Network Address Translation (NAT).
+**When to use it:**
+- Home server plugged into a router
+- Office or co-working space with wired Ethernet
+- Any location with an Ethernet port
 
-### When to Use It
+**Requirements:** Ethernet cable connected to a router or switch that provides DHCP.
 
-- **Home server**: Plug into your router for reliable internet
-- **Office deployment**: Connect to the wired network
-- **Any location with Ethernet**: Hotels, co-working spaces, server rooms
+**Pi-hole DHCP:** ON. Serves addresses to WiFi clients only; Ethernet interface is excluded from DHCP scope.
 
-### How It Works
+**How to switch:** Plug in the Ethernet cable, then Dashboard > Network > select WiFi Router > configure (optional static IP) > Confirm.
 
-1. `eth0` receives an IP address from the upstream router via DHCP.
-2. `hostapd` creates the WiFi access point on `wlan0`.
-3. Pi-hole serves DNS and DHCP to WiFi clients.
-4. `iptables` NAT rules forward traffic from `wlan0` clients to `eth0`.
-5. Clients get internet access through the Pi's Ethernet connection.
+**Caveats:**
+- Most reliable internet mode -- wired connection, no WiFi interference.
+- Pi-hole filters ads and trackers for all connected WiFi clients.
+- NAT rules forward traffic from the WiFi subnet (`10.42.24.0/24`) to `eth0`.
 
-### Benefits
+---
 
-- Most reliable internet connection method
-- Full-speed internet for all clients
-- Pi-hole filters ads and trackers for all connected devices
-- App installation from both internet and local registry
-- System updates available
-
-## ONLINE_WIFI Mode (WiFi Dongle Uplink)
+### wifi_bridge -- WiFi Bridge
 
 ```
 [Internet] <-- WiFi (wlan1) --> [Raspberry Pi] <-- WiFi AP (wlan0) --> Clients
-              USB adapter                          built-in WiFi
+              USB WiFi adapter                     built-in WiFi
 ```
 
-### What It Does
+**What it does:** CubeOS uses a USB WiFi adapter as a client to connect to an existing WiFi network for internet, while the built-in WiFi radio broadcasts the CubeOS access point. Internet is shared with AP clients through NAT.
 
-CubeOS uses a USB WiFi adapter to connect to an existing WiFi network for internet access. The Pi's built-in WiFi radio continues to serve as the access point for clients.
+**When to use it:**
+- No Ethernet port available at the location
+- Temporary setups, events, demonstrations
+- Travel -- share hotel WiFi securely to your devices
 
-### When to Use It
+**Requirements:**
+- A USB WiFi adapter (RTL8812AU chipset recommended).
+- The upstream WiFi network's SSID and password.
 
-- **Mobile deployment**: No Ethernet port available at the location
-- **Temporary setups**: Events, pop-up offices, demonstrations
-- **Travel**: Hotel WiFi shared securely to your devices
+**Pi-hole DHCP:** ON. Serves addresses to WiFi AP clients only; the USB adapter interface is excluded from DHCP scope.
 
-### Requirements
+**How to switch:** Plug in the USB WiFi adapter, then Dashboard > Network > select WiFi Bridge > enter the upstream WiFi SSID and password > Confirm.
 
-- A compatible USB WiFi adapter. Recommended chipsets:
-  - RTL8812AU (best compatibility)
-  - Other chipsets may work but are not guaranteed
-
-### How It Works
-
-1. `hostapd` creates the access point on the built-in WiFi radio (`wlan0`).
-2. The USB WiFi adapter (`wlan1`) connects as a client to the upstream WiFi network.
-3. Pi-hole serves DNS and DHCP to access point clients.
-4. `iptables` NAT rules forward traffic from `wlan0` clients through `wlan1`.
-5. Clients get internet access through the upstream WiFi network.
-
-### Connecting to an Upstream Network
-
-1. Go to Dashboard > Network.
-2. Select ONLINE_WIFI mode.
-3. The system scans for available WiFi networks.
-4. Select your network from the list and enter the password.
-5. CubeOS connects and begins sharing internet with AP clients.
-
-### Notes
-
-- WiFi speeds depend on the upstream network and USB adapter capabilities.
-- The built-in WiFi radio is dedicated to the access point. It cannot be used for both AP and client simultaneously.
+**Caveats:**
+- The built-in WiFi radio is dedicated to the access point. A second radio is required for the uplink.
 - USB 3.0 adapters in USB 3.0 ports provide the best throughput.
+- If no SSID is configured, the mode will not activate and falls back to `offline_hotspot`.
+- At boot, the system waits up to 5 seconds for the USB adapter to obtain an IP. If it fails, a warning is logged but the AP remains operational (clients can still reach local services).
+
+---
+
+### android_tether -- Android Tether
+
+```
+[Internet] <-- USB tether (usb0) --> [Raspberry Pi] <-- WiFi AP (wlan0) --> Clients
+               Android phone                            built-in WiFi
+```
+
+**What it does:** CubeOS uses a USB-tethered Android phone as the internet uplink while broadcasting a WiFi access point. Internet from the phone's mobile data is shared with all WiFi clients through NAT.
+
+**When to use it:**
+- Mobile deployment where only cellular internet is available
+- Temporary connectivity via a phone's data plan
+- Locations with no WiFi or Ethernet infrastructure
+
+**Requirements:**
+- An Android phone with USB tethering enabled (Settings > Network > Hotspot & tethering > USB tethering).
+- A USB cable connecting the phone to the Pi.
+
+**Pi-hole DHCP:** ON. Serves addresses to WiFi AP clients.
+
+**How to switch:** Connect the Android phone via USB and enable USB tethering, then Dashboard > Network > select Android Tether > Confirm.
+
+**Caveats:**
+- The USB tethering interface typically appears as `usb0` or `rndis0`.
+- Phone must remain connected and tethering must stay enabled for internet to work.
+- Battery drain on the phone can be significant -- keep it plugged into a charger.
+- Boot script support for this mode is still being implemented. If the mode is set and the boot script does not recognise it, the system falls back to `offline_hotspot`.
+
+---
+
+### wifi_client -- WiFi Client
+
+```
+                                       Home WiFi Network
+                                      /
+[Internet] <-- WiFi Router --> [Raspberry Pi]
+                                      \
+                                       Other home devices
+
+No CubeOS access point. Pi joins the existing network as a regular WiFi device.
+```
+
+**What it does:** CubeOS connects directly to an existing WiFi network using its built-in radio. No access point is created. The device behaves like any other WiFi client on the network.
+
+**When to use it:**
+- Home server that should join the existing home WiFi
+- Headless server where you access the dashboard from your regular network
+- Situations where broadcasting a separate access point is not desired
+
+**Requirements:**
+- A WiFi network to join (SSID and password).
+- Clients must be on the same network as the Pi to reach the dashboard.
+
+**Pi-hole DHCP:** OFF. CubeOS does not run DHCP on networks it does not own. Pi-hole provides DNS-only resolution for internal `*.cubeos.cube` domains.
+
+**How to switch:** Dashboard > Network > select WiFi Client > enter the WiFi SSID and password > acknowledge the warning that all current WiFi clients will be disconnected > Confirm.
+
+**Caveats:** See the detailed section below.
+
+---
+
+### eth_client -- Ethernet Client
+
+```
+[Internet] <-- Ethernet --> [Router] <-- Ethernet --> [Raspberry Pi]
+                                                        (eth0)
+
+No CubeOS access point. Pi joins the existing network via Ethernet.
+```
+
+**What it does:** CubeOS connects directly to an existing network via Ethernet. No access point is created. The device behaves like any other wired client on the network.
+
+**When to use it:**
+- Dedicated server room or rack with wired connectivity
+- VM or LXC container deployments
+- Environments where WiFi is unavailable or unnecessary
+
+**Requirements:** Ethernet cable connected to a router or switch that provides DHCP (or static IP configured).
+
+**Pi-hole DHCP:** OFF. CubeOS does not run DHCP on networks it does not own.
+
+**How to switch:** Plug in the Ethernet cable, then Dashboard > Network > select Ethernet Client > configure (optional static IP) > acknowledge the warning > Confirm.
+
+**Caveats:**
+- If the Pi has WiFi hardware, the WiFi radio is disabled (hostapd stopped, interface flushed).
+- Dashboard accessible at `cubeos.local` (via mDNS/Avahi) or the DHCP-assigned IP.
+- Avahi is started automatically so the device is discoverable via `.local`.
+
+---
+
+## wifi_client Mode -- Special Notes
+
+Switching to `wifi_client` is the most complex mode transition because it tears down the access point that the user may be connected to. Several safety mechanisms ensure the user is never locked out.
+
+### AP Teardown Process
+
+When switching to `wifi_client`, the system executes this sequence:
+
+1. Stop hostapd (tears down the access point).
+2. Disable Pi-hole DHCP.
+3. Flush the AP interface IP (`ip addr flush wlan0`).
+4. Write a station-mode netplan (WiFi client configuration).
+5. Apply netplan -- starts `wpa_supplicant` for WiFi association.
+6. Wait for a DHCP lease from the upstream network.
+7. Verify connectivity.
+8. If successful: save mode to database, start Avahi for `.local` discovery.
+9. If failed: revert to `offline_hotspot` (see below).
+
+### 30-Second Auto-Revert
+
+After applying the station-mode netplan, the system polls for a DHCP-assigned IP every 2 seconds for up to 30 seconds. If no IP is obtained within the timeout:
+
+- Netplan is rewritten to `offline_hotspot` configuration.
+- `netplan apply` restores the AP interface.
+- hostapd is restarted.
+- Pi-hole DHCP is re-enabled.
+- The database is updated back to `offline_hotspot`.
+
+The user can reconnect to the CubeOS WiFi network and try again.
+
+### WiFi Watchdog
+
+After a successful switch to `wifi_client`, a watchdog monitors the station connection:
+
+- Checks connectivity every 60 seconds.
+- After 5 consecutive failures, automatically reverts to `offline_hotspot`.
+- This prevents the device from becoming unreachable if the upstream WiFi network goes down or moves out of range.
+
+### mDNS Discovery After Switch
+
+Once in `wifi_client` mode, the dashboard is no longer at `cubeos.cube` (there is no AP or DNS server serving that domain to external clients). Instead:
+
+| Platform | How to reach the dashboard |
+|----------|---------------------------|
+| macOS, iOS | `http://cubeos.local` (mDNS native) |
+| Windows 10/11 | `http://cubeos.local` (mDNS native) |
+| Linux | `http://cubeos.local` (requires avahi-daemon) |
+| Android | mDNS is unreliable -- check your router's DHCP client list for the Pi's IP |
+
+The setup wizard's final screen shows this information before initiating the switch.
+
+### Pi Imager WiFi Credential Pre-Fill
+
+If WiFi credentials were entered in the Raspberry Pi Imager customization screen at flash time, CubeOS extracts them at first boot and pre-fills the setup wizard. The user can then choose `wifi_client` to join that network without re-entering credentials. Cloud-init is configured to never apply these credentials directly -- CubeOS controls when and how they are used.
+
+---
 
 ## Switching Modes
 
-You can switch between network modes at any time:
+### How to Switch via Dashboard
 
-1. Open the dashboard at [http://cubeos.cube](http://cubeos.cube).
+1. Open the dashboard at `http://cubeos.cube` (AP modes) or `http://cubeos.local` (client modes).
 2. Navigate to **Network** in the sidebar.
-3. Select the desired mode from the mode selector.
-4. If switching to ONLINE_WIFI, select and authenticate to the upstream WiFi network.
-5. Confirm the switch.
+3. Select the desired mode from the mode selector grid.
+4. For modes that require configuration (all except `offline_hotspot`), a dialog opens to collect upstream credentials, optional static IP settings, and any required acknowledgements.
+5. For switches to client modes (`wifi_client`, `eth_client`), you must acknowledge that the access point will be torn down and WiFi clients will be disconnected.
+6. Confirm the switch.
 
-### What Happens During a Switch
+Modes may be greyed out and unavailable if the required hardware is not detected (e.g., `wifi_bridge` without a USB WiFi adapter).
 
-- The mode change is orchestrated as a FlowEngine workflow with automatic rollback protection.
-- There will be a brief WiFi disconnection (approximately 10 seconds) while the access point reconfigures.
-- If the switch fails for any reason, CubeOS automatically reverts to the previous working mode.
-- All running apps continue to operate. Only network routing changes.
+### What Happens During a Mode Switch
 
-### Switching Tips
+The mode change is orchestrated as a FlowEngine workflow with automatic rollback:
 
-- **OFFLINE to ONLINE_ETH**: Plug in the Ethernet cable before switching.
-- **OFFLINE to ONLINE_WIFI**: Make sure your USB WiFi adapter is plugged in.
-- **Any mode to OFFLINE**: Works immediately, just removes internet routing.
-- **ONLINE_ETH to ONLINE_WIFI**: You can switch directly. Ethernet will be deactivated.
+1. Validate hardware requirements for the target mode.
+2. Update netplan configuration for the new mode.
+3. Reconfigure interfaces (stop/start hostapd, flush IPs, apply NAT rules).
+4. Toggle Pi-hole DHCP (ON for AP modes, OFF for client modes).
+5. Verify connectivity (for internet-connected modes).
+6. If any step fails, the workflow rolls back to the previous working mode.
+
+There is a brief network interruption (approximately 10 seconds) during the switch. All running apps continue to operate -- only network routing changes.
+
+### Pi-hole DHCP Safety
+
+Pi-hole DHCP is enforced at three points to prevent rogue DHCP servers on networks CubeOS does not own:
+
+1. **Every mode switch** -- the FlowEngine saga toggles DHCP as part of the transition.
+2. **Every boot** -- the boot script reads the current mode from the database and enforces the correct DHCP state.
+3. **Watchdog fallback** -- reverting to `offline_hotspot` re-enables DHCP.
+
+If the mode in the database is unknown or corrupt, the system defaults to `offline_hotspot` (AP + DHCP -- safe because CubeOS owns the subnet).
+
+---
+
+## Network Diagrams
+
+### offline_hotspot
+
+```
++------------------+         WiFi AP (wlan0)         +----------------+
+|                  |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~>  |  Client Phone  |
+|  Raspberry Pi    |  <~~~~~~~~~~~~~~~~~~~~~~~~~~~~  +----------------+
+|  10.42.24.1      |
+|                  |         WiFi AP (wlan0)         +----------------+
+|  [Pi-hole DHCP]  |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~>  | Client Laptop  |
+|  [hostapd]       |  <~~~~~~~~~~~~~~~~~~~~~~~~~~~~  +----------------+
++------------------+
+
+No internet. All services are local.
+Pi-hole serves DNS + DHCP on 10.42.24.0/24.
+```
+
+### wifi_router
+
+```
++-----------+    Ethernet (eth0)    +------------------+    WiFi AP (wlan0)    +----------------+
+|  Internet |  ==================>  |                  |  ~~~~~~~~~~~~~~~~~~>  |  Client Phone  |
+|  Router   |  <==================  |  Raspberry Pi    |  <~~~~~~~~~~~~~~~~~~  +----------------+
++-----------+                       |  10.42.24.1      |
+                                    |                  |    WiFi AP (wlan0)    +----------------+
+                                    |  [NAT: wlan0→eth0] ~~~~~~~~~~~~~~~~~~>  | Client Laptop  |
+                                    |  [Pi-hole DHCP]  |  <~~~~~~~~~~~~~~~~~~  +----------------+
+                                    |  [hostapd]       |
+                                    +------------------+
+
+Internet via Ethernet. NAT forwards WiFi client traffic to eth0.
+Pi-hole serves DNS + DHCP on 10.42.24.0/24.
+```
+
+### wifi_client
+
+```
++-----------+    WiFi    +------------------+
+|  Home     |  ~~~~~~~~  |                  |
+|  WiFi     |  ~~~~~~~~  |  Raspberry Pi    |
+|  Router   |            |  (DHCP IP from   |
++-----------+            |   home router)   |
+     |                   |                  |
+     |  WiFi             |  [Avahi/mDNS]    |
+     |                   +------------------+
++----------------+
+| Client Laptop  |-----> Reaches Pi at cubeos.local or DHCP IP
++----------------+
+
+No AP. No CubeOS DHCP. Pi is a regular device on the home network.
+Pi-hole runs DNS-only for internal *.cubeos.cube resolution.
+```
+
+---
 
 ## Technical Details
 
@@ -184,84 +367,97 @@ You can switch between network modes at any time:
 | DHCP Range | `10.42.24.10` - `10.42.24.250` |
 | DNS Server | `10.42.24.1` (Pi-hole) |
 | Domain | `cubeos.cube` |
+| Default AP SSID | `CubeOS` |
+| Default AP Channel | `7` |
 
-The `10.42.24.0/24` subnet was chosen specifically to avoid conflicts with common home and office networks, which typically use `192.168.0.0/24`, `192.168.1.0/24`, or `10.0.0.0/24`.
+The `10.42.24.0/24` subnet was chosen to avoid conflicts with common home and office networks (`192.168.0.0/24`, `192.168.1.0/24`, `10.0.0.0/24`).
+
+### Interface Role Assignment
+
+CubeOS uses role-based interface assignment rather than hardcoded interface names. HAL detects hardware at boot and assigns roles:
+
+| Role | Purpose |
+|------|---------|
+| **ap** | Runs the CubeOS access point (hostapd) |
+| **uplink** | Provides internet connectivity |
+| **unused** | Detected but not assigned |
+
+Detection priority for the AP role: SDIO WiFi (Pi built-in) > PCI WiFi > USB WiFi.
+
+When multiple interfaces exist for a role, the setup wizard asks the user to choose.
+
+### Static IP Support
+
+Any mode with an upstream interface supports optional static IP configuration instead of DHCP. When static IP is configured:
+
+- AP modes use Pi-hole (`10.42.24.1`) as the DNS fallback.
+- Client modes use public DNS (`1.1.1.1`, `8.8.8.8`) as the DNS fallback.
 
 ### DNS and Domain Resolution
 
-- **Pi-hole** handles all DNS for connected clients.
+- **Pi-hole** handles all DNS for connected clients (AP modes) or internal resolution (client modes).
 - Every CubeOS service gets a subdomain: `service.cubeos.cube` (e.g., `pihole.cubeos.cube`, `logs.cubeos.cube`).
-- In ONLINE modes, Pi-hole forwards external DNS queries to upstream resolvers while filtering ads and trackers.
-- In OFFLINE mode, only `.cubeos.cube` domains resolve. External domains return NXDOMAIN.
-
-### DHCP
-
-- Pi-hole's built-in DHCP server assigns addresses to WiFi clients.
-- Lease range: `10.42.24.10` through `10.42.24.250` (241 addresses).
-- The gateway (`10.42.24.1`) and DNS (`10.42.24.1`) are pushed to all clients automatically.
+- In internet-connected modes, Pi-hole forwards external DNS queries to upstream resolvers while filtering ads and trackers.
+- In `offline_hotspot`, only `*.cubeos.cube` domains resolve. External domains return NXDOMAIN.
 
 ### Reverse Proxy
 
 - Nginx Proxy Manager (NPM) listens on ports 80 and 443.
 - Each app's subdomain is routed to the correct internal port.
-- In ONLINE modes with a public IP, NPM can provision SSL certificates via Let's Encrypt.
+- In internet-connected modes with a public IP, NPM can provision SSL certificates via Let's Encrypt.
 
 ### Firewall and NAT
 
-- In ONLINE modes, `iptables` rules enable IP masquerading (NAT) from the WiFi subnet to the internet-facing interface.
+- In AP modes with internet (`wifi_router`, `wifi_bridge`, `android_tether`), iptables rules enable IP masquerading from the WiFi subnet to the uplink interface.
 - Forwarding is enabled only for established connections and new outbound connections from the WiFi subnet.
-- The Pi itself is accessible only from the WiFi subnet by default.
+- In client modes and `offline_hotspot`, NAT is disabled.
 
-### Access Point Configuration
-
-The access point is managed by `hostapd` and configured through the HAL (Hardware Abstraction Layer). Configuration changes made through the dashboard are applied via the HAL REST API. Direct editing of `/etc/hostapd/hostapd.conf` is not recommended.
+---
 
 ## Troubleshooting
 
 ### "I can't connect to the CubeOS WiFi network"
 
 1. Make sure the Pi has been running for at least 90 seconds after power-on.
-2. Check that the WiFi LED on the Pi is active.
-3. Try moving closer to the Pi -- WiFi range depends on your environment.
-4. If you recently changed the WiFi name or password, make sure you're using the new credentials.
-5. Some devices cache old WiFi credentials. Forget the "CubeOS" network and reconnect.
-6. Check for WiFi channel conflicts. If many networks are on the same channel, the AP may struggle. This can be changed in Dashboard > Network > WiFi AP settings.
+2. Confirm the current mode is an AP mode (not `wifi_client` or `eth_client`).
+3. Check that the WiFi LED on the Pi is active.
+4. Move closer to the Pi -- range depends on the environment.
+5. If you recently changed the WiFi name or password, use the new credentials.
+6. Forget the "CubeOS" network on your device and reconnect.
 
-### "I connected to CubeOS WiFi but cubeos.cube doesn't load"
+### "cubeos.cube doesn't load after connecting"
 
-1. Wait 10-15 seconds after connecting for DNS to initialize.
-2. Try the direct IP address: [http://10.42.24.1](http://10.42.24.1)
-3. Check that your device received an IP in the `10.42.24.x` range (check WiFi connection details).
-4. Clear your browser cache or try an incognito/private window.
-5. Make sure you're using `http://` not `https://`.
+1. Wait 10-15 seconds after connecting for DNS to propagate.
+2. Try the direct IP: `http://10.42.24.1`.
+3. Check that your device received an IP in the `10.42.24.x` range.
+4. Clear your browser cache or try incognito mode.
+5. Use `http://` not `https://`.
 
-### "No internet in ONLINE_ETH mode"
+### "No internet in wifi_router mode"
 
-1. Verify the Ethernet cable is plugged in securely at both ends.
-2. Check that the upstream router/switch is providing DHCP.
-3. Look at Dashboard > Network to confirm `eth0` received an IP address.
-4. Try unplugging and re-plugging the Ethernet cable.
-5. Restart the network mode: switch to OFFLINE, then back to ONLINE_ETH.
+1. Verify the Ethernet cable is plugged in at both ends.
+2. Check that the upstream router provides DHCP.
+3. Look at Dashboard > Network to confirm `eth0` received an IP.
+4. Try switching to `offline_hotspot` and back to `wifi_router`.
 
-### "WiFi scan shows no networks in ONLINE_WIFI mode"
+### "WiFi scan shows no networks (wifi_bridge mode)"
 
-1. Confirm your USB WiFi adapter is plugged in and recognized.
+1. Confirm the USB WiFi adapter is plugged in and recognised.
 2. Check Dashboard > Network for adapter status.
-3. Make sure the adapter uses a supported chipset (RTL8812AU recommended).
-4. Try unplugging and re-plugging the USB adapter.
-5. Some 5 GHz networks may not be visible depending on adapter capabilities.
+3. Ensure the adapter uses a supported chipset (RTL8812AU recommended).
+4. Try unplugging and re-plugging the adapter.
 
-### "Network mode switch failed"
+### "Can't reach the dashboard after switching to wifi_client"
+
+1. Connect to the same WiFi network the Pi joined.
+2. Try `http://cubeos.local` (works on macOS, iOS, Windows, Linux with Avahi).
+3. Check your router's DHCP client list for the Pi's IP address.
+4. If the switch failed, the Pi auto-reverted to `offline_hotspot` -- look for the CubeOS WiFi network.
+
+### "Mode switch failed"
 
 1. The system automatically rolled back to the previous working mode.
 2. Check Dashboard > Network for the current active mode.
-3. Review logs in Dozzle ([http://logs.cubeos.cube](http://logs.cubeos.cube)) for error details.
-4. Make sure the required hardware is connected (Ethernet cable for ONLINE_ETH, USB adapter for ONLINE_WIFI).
-5. Try the switch again. Transient failures can occur if hardware is still initializing.
-
-### "Clients can't reach the internet but CubeOS works fine"
-
-1. This usually indicates a NAT or forwarding issue.
-2. Try switching to OFFLINE mode and back to your desired ONLINE mode.
-3. Reboot the Pi if the issue persists: Dashboard > Settings > Reboot.
-4. Check that Pi-hole is running: Dashboard > Apps > Pi-hole should show "Running".
+3. Review logs in Dozzle (`http://logs.cubeos.cube`) for error details.
+4. Ensure the required hardware is connected for the target mode.
+5. Try the switch again -- transient failures can occur if hardware is still initialising.
