@@ -1,0 +1,74 @@
+{
+  "feature_id": "010-system-status-introspection",
+  "parent_epic": "CUBEOS-OBSERVABILITY",
+  "spec_revision": "1 (2026-05-17 — initial)",
+  "tasks": [
+    {
+      "id": "T-001",
+      "status": "pending",
+      "title": "Collectors + 10s cache + GET /system/status + /system/hardware",
+      "prompt": "FIRST: read spec/010-system-status-introspection/{requirements.md, design.md, acceptance/status.feature}. SECOND: implement api/internal/managers/system_collectors.go (REQ-1000/1001) sampling /proc/stat, /proc/meminfo, df, vcgencmd, HAL probes every 5s into in-memory cache (10s TTL). Implement handlers/system_status.go + handlers/system_hardware.go (REQ-1011/1012) with WebSocket push on hardware change. Full Swagger annotations per Article XII.",
+      "files_owned": [
+        "api/internal/managers/system_collectors.go",
+        "api/internal/managers/system_collectors_test.go",
+        "api/internal/handlers/system_status.go",
+        "api/internal/handlers/system_hardware.go",
+        "api/internal/handlers/system_status_test.go"
+      ],
+      "acceptance_test": "cd api && go test -v -run TestSystemStatus ./internal/handlers/ && go test -v -run TestSystemCollectors ./internal/managers/",
+      "dependencies": [],
+      "parallelizable": true,
+      "bounded_context": "ci",
+      "requirement_ids": ["REQ-1000", "REQ-1001", "REQ-1002", "REQ-1011", "REQ-1012", "REQ-1018", "REQ-1019"],
+      "complexity": 6,
+      "risk_score": 0.4,
+      "max_wall_clock_minutes": 90,
+      "max_loc_delta": 1100
+    },
+    {
+      "id": "T-002",
+      "status": "pending",
+      "title": "Health probes + GET /system/health + audit-log search + boot history",
+      "prompt": "FIRST: read spec/010-system-status-introspection/{requirements.md, design.md, acceptance/status.feature}. SECOND: implement health probes per the table in design.md (REQ-1003/1004/1005). Implement audit-log search handler (REQ-1008/1009) with from/to/event_type/actor filters paginated. Implement boot history endpoint (REQ-1010). Per-coreapp resource visibility endpoint (REQ-1006).",
+      "files_owned": [
+        "api/internal/managers/health_probes.go",
+        "api/internal/managers/health_probes_test.go",
+        "api/internal/handlers/system_health.go",
+        "api/internal/handlers/system_audit.go",
+        "api/internal/handlers/system_boot_history.go",
+        "api/internal/handlers/system_stack_resources.go"
+      ],
+      "acceptance_test": "cd api && go test -v -run TestSystemHealth ./internal/handlers/ && go test -v -run TestSystemAudit ./internal/handlers/",
+      "dependencies": ["T-001"],
+      "parallelizable": false,
+      "bounded_context": "ci",
+      "requirement_ids": ["REQ-1003", "REQ-1004", "REQ-1005", "REQ-1006", "REQ-1008", "REQ-1009", "REQ-1010"],
+      "complexity": 7,
+      "risk_score": 0.5,
+      "max_wall_clock_minutes": 110,
+      "max_loc_delta": 1300
+    },
+    {
+      "id": "T-003",
+      "status": "pending",
+      "title": "cubeos-cli system commands + dashboard sparklines + Prometheus exporter flag",
+      "prompt": "FIRST: read spec/010-system-status-introspection/{requirements.md, design.md, acceptance/status.feature}. SECOND: implement cubeos-cli system status/health/hardware commands (REQ-1013/1014/1015) sourced from cubeos-cli/ tree (existing). Implement dashboard sparkline widget (REQ-1007) polling /system/stacks/*/resources. Implement Prometheus /metrics endpoint behind feature flag (REQ-1016/1017) — uses prometheus/client_golang.",
+      "files_owned": [
+        "cubeos-cli/cmd/system.go",
+        "cubeos-cli/cmd/system_test.go",
+        "dashboard/src/components/ResourceSparkline.vue",
+        "api/internal/handlers/metrics.go",
+        "api/internal/handlers/metrics_test.go"
+      ],
+      "acceptance_test": "cd api && go test -v -run TestMetricsExporter ./internal/handlers/ && cd cubeos-cli && go test -v -run TestSystemCommands ./cmd/",
+      "dependencies": ["T-002"],
+      "parallelizable": false,
+      "bounded_context": "ci",
+      "requirement_ids": ["REQ-1007", "REQ-1013", "REQ-1014", "REQ-1015", "REQ-1016", "REQ-1017"],
+      "complexity": 5,
+      "risk_score": 0.4,
+      "max_wall_clock_minutes": 80,
+      "max_loc_delta": 1000
+    }
+  ]
+}

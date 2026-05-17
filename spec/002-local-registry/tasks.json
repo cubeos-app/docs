@@ -1,0 +1,70 @@
+{
+  "feature_id": "002-local-registry",
+  "parent_epic": "CUBEOS-REGISTRY",
+  "spec_revision": "1 (2026-05-17 — initial)",
+  "tasks": [
+    {
+      "id": "T-001",
+      "status": "pending",
+      "title": "Registry stack compose + persistent volume + Swarm deploy ordering",
+      "prompt": "FIRST: read spec/002-local-registry/{requirements.md, design.md, acceptance/registry.feature}. SECOND: create coreapps/registry/docker-compose.yml deploying registry:2 with bind-mount to /cubeos/data/registry per REQ-200/202. (REQ-201) bind listen address to 127.0.0.1:5000 only. Add registry to the boot-order list in cubeos-init.sh (right after pihole+npm; before api per spec/001 REQ-101). Verify Article V port discipline (registry is the explicit 5000 exception per Article II + Article XIV).",
+      "files_owned": [
+        "coreapps/registry/docker-compose.yml",
+        "coreapps/registry/config.yml"
+      ],
+      "acceptance_test": "ssh root@<pi-test-host> 'docker stack services registry | grep -q replicated' && curl -s http://localhost:5000/v2/_catalog | jq -e .repositories",
+      "dependencies": [],
+      "parallelizable": true,
+      "bounded_context": "registry",
+      "requirement_ids": ["REQ-200", "REQ-201", "REQ-202", "REQ-203"],
+      "complexity": 3,
+      "risk_score": 0.3,
+      "max_wall_clock_minutes": 40,
+      "max_loc_delta": 200
+    },
+    {
+      "id": "T-002",
+      "status": "pending",
+      "title": "Registry API endpoint + dashboard widget + import-from-file action",
+      "prompt": "FIRST: read spec/002-local-registry/{requirements.md, design.md, acceptance/registry.feature}. SECOND: implement api/internal/handlers/registry.go with GET /api/v1/registry/status (REQ-215) + POST /api/v1/registry/import (REQ-207/208). (REQ-211) Pre-deploy hook validates every compose image is present in local registry; fails with listing of missing images. Implement dashboard RegistryStatusView.vue with widget + import upload form. Vue 3 Composition API + Tailwind.",
+      "files_owned": [
+        "api/internal/handlers/registry.go",
+        "api/internal/handlers/registry_test.go",
+        "api/internal/managers/registry.go",
+        "api/internal/managers/registry_test.go",
+        "dashboard/src/views/RegistryStatusView.vue",
+        "dashboard/src/stores/registry.ts"
+      ],
+      "acceptance_test": "cd api && go test -v -run TestRegistry ./internal/handlers/",
+      "dependencies": ["T-001"],
+      "parallelizable": false,
+      "bounded_context": "registry",
+      "requirement_ids": ["REQ-207", "REQ-208", "REQ-209", "REQ-211", "REQ-215", "REQ-216", "REQ-217"],
+      "complexity": 5,
+      "risk_score": 0.4,
+      "max_wall_clock_minutes": 75,
+      "max_loc_delta": 900
+    },
+    {
+      "id": "T-003",
+      "status": "pending",
+      "title": "Garbage-collection job + offline-mode pull guard",
+      "prompt": "FIRST: read spec/002-local-registry/{requirements.md, design.md, acceptance/registry.feature}. SECOND: implement api/internal/managers/registry_gc.go (REQ-212/213/214) — invokes `registry garbage-collect --dry-run` then `registry garbage-collect` if confirmed; preserves layers in actively-deployed stacks. (REQ-210) implement coreapps pre-pull guard: when active mode is `offline_hotspot`, fail any attempted pull from non-local registries with explicit error log. Hook into the api Orchestrator app-install path.",
+      "files_owned": [
+        "api/internal/managers/registry_gc.go",
+        "api/internal/managers/registry_gc_test.go",
+        "api/internal/managers/pull_guard.go",
+        "api/internal/managers/pull_guard_test.go"
+      ],
+      "acceptance_test": "cd api && go test -v -run TestRegistryGC ./internal/managers/ && go test -v -run TestPullGuard ./internal/managers/",
+      "dependencies": ["T-002"],
+      "parallelizable": false,
+      "bounded_context": "registry",
+      "requirement_ids": ["REQ-204", "REQ-210", "REQ-212", "REQ-213", "REQ-214"],
+      "complexity": 4,
+      "risk_score": 0.4,
+      "max_wall_clock_minutes": 50,
+      "max_loc_delta": 600
+    }
+  ]
+}

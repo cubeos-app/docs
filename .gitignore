@@ -10,3 +10,7 @@ Thumbs.db
 # Session artifacts (belong in project knowledge, not source control)
 *HANDOVER*.md
 *SESSION*.md
+
+# Claude Code — local-only, NEVER commit
+CLAUDE.md
+.claude/

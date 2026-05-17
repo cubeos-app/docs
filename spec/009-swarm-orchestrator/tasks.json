@@ -1,0 +1,77 @@
+{
+  "feature_id": "009-swarm-orchestrator",
+  "parent_epic": "CUBEOS-HYDRA-FIX",
+  "spec_revision": "1 (2026-05-17 — retrospective; Phases 1-4 shipped per roadmap §2)",
+  "tasks": [
+    {
+      "id": "T-001",
+      "status": "done",
+      "title": "SwarmManager + Orchestrator + unified apps table + port allocator",
+      "prompt": "(RETROSPECTIVE — completed Jan-Feb 2026 per roadmap §2 Phases 1-3.) SwarmManager wraps Docker Swarm; Orchestrator routes lifecycle; port allocator manages 6100-6999.",
+      "files_owned": [
+        "api/internal/managers/swarm.go",
+        "api/internal/managers/orchestrator.go",
+        "api/internal/managers/ports.go",
+        "api/internal/database/migrations.go"
+      ],
+      "acceptance_test": "cd api && go test -v -run TestSwarmManager ./internal/managers/ && go test -v -run TestOrchestrator ./internal/managers/",
+      "dependencies": [],
+      "parallelizable": true,
+      "bounded_context": "orchestrator",
+      "requirement_ids": ["REQ-900", "REQ-901", "REQ-902", "REQ-903", "REQ-904", "REQ-905", "REQ-906", "REQ-907", "REQ-912", "REQ-913", "REQ-914", "REQ-919"],
+      "complexity": 8,
+      "risk_score": 0.0,
+      "max_wall_clock_minutes": 180,
+      "max_loc_delta": 2200,
+      "completed_at": "2026-02-10"
+    },
+    {
+      "id": "T-002",
+      "status": "done",
+      "title": "FlowEngine + 7 sagas + compose transformer + tasks.db threshold warning",
+      "prompt": "(RETROSPECTIVE — completed Jan-Feb 2026 per roadmap §2.) FlowEngine runs sagas with compensation; compose.go transforms CasaOS → Swarm; tasks.db threshold warning landed in Phase 4 cleanup.",
+      "files_owned": [
+        "api/internal/flowengine/engine.go",
+        "api/internal/flowengine/install_app.go",
+        "api/internal/flowengine/uninstall_app.go",
+        "api/internal/flowengine/start_app.go",
+        "api/internal/flowengine/stop_app.go",
+        "api/internal/flowengine/backup.go",
+        "api/internal/managers/compose.go",
+        "api/internal/managers/tasks_db_monitor.go"
+      ],
+      "acceptance_test": "cd api && go test -v -run TestFlowEngine ./internal/flowengine/",
+      "dependencies": ["T-001"],
+      "parallelizable": false,
+      "bounded_context": "orchestrator",
+      "requirement_ids": ["REQ-908", "REQ-909", "REQ-910", "REQ-911", "REQ-915", "REQ-916", "REQ-920"],
+      "complexity": 7,
+      "risk_score": 0.0,
+      "max_wall_clock_minutes": 150,
+      "max_loc_delta": 1800,
+      "completed_at": "2026-02-12"
+    },
+    {
+      "id": "T-003",
+      "status": "done",
+      "title": "Swarm GUI in dashboard + stacks/logs API endpoints",
+      "prompt": "(RETROSPECTIVE — completed Feb 2026 per roadmap §2 'Dashboard built-in Swarm GUI'.) /swarm-gui route + WebSocket log streaming shipped.",
+      "files_owned": [
+        "dashboard/src/views/SwarmGUIView.vue",
+        "dashboard/src/components/StackList.vue",
+        "dashboard/src/components/LogStreamer.vue",
+        "api/internal/handlers/system_stacks.go"
+      ],
+      "acceptance_test": "cd api && go test -v -run TestSystemStacks ./internal/handlers/",
+      "dependencies": ["T-002"],
+      "parallelizable": false,
+      "bounded_context": "orchestrator",
+      "requirement_ids": ["REQ-917", "REQ-918", "REQ-921", "REQ-922"],
+      "complexity": 6,
+      "risk_score": 0.0,
+      "max_wall_clock_minutes": 100,
+      "max_loc_delta": 1300,
+      "completed_at": "2026-02-18"
+    }
+  ]
+}

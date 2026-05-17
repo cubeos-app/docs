@@ -1,0 +1,68 @@
+{
+  "feature_id": "005-usb-wifi-ap",
+  "parent_epic": "CUBEOS-PHASE-10",
+  "spec_revision": "1 (2026-05-17 — initial)",
+  "tasks": [
+    {
+      "id": "T-001",
+      "status": "pending",
+      "title": "HAL: AP-capable USB adapter detection + device registry",
+      "prompt": "FIRST: read spec/005-usb-wifi-ap/{requirements.md, design.md, acceptance/usb-ap.feature}. SECOND: implement hal/internal/network/ap_detector.go scanning USB WiFi adapters via `iw phy` + `iw list`. (REQ-500/501/502) Mark AP-capable adapters in the HAL device registry; expose via GET /hal/network/wifi-adapters. Test on Pi 5 with at least one mt7612u + onboard wlan0 to verify both surface correctly.",
+      "files_owned": [
+        "hal/internal/network/ap_detector.go",
+        "hal/internal/network/ap_detector_test.go",
+        "hal/internal/network/wifi_registry.go"
+      ],
+      "acceptance_test": "ssh root@<pi-test-host> 'curl -s -H X-HAL-Key:$HAL_KEY http://localhost:6005/hal/network/wifi-adapters | jq -e \".[] | select(.ap_capable==true)\"'",
+      "dependencies": [],
+      "parallelizable": true,
+      "bounded_context": "hal",
+      "requirement_ids": ["REQ-500", "REQ-501", "REQ-502", "REQ-509"],
+      "complexity": 5,
+      "risk_score": 0.4,
+      "max_wall_clock_minutes": 70,
+      "max_loc_delta": 800
+    },
+    {
+      "id": "T-002",
+      "status": "pending",
+      "title": "API: AP interface selector + persistence + network-mode-switch saga integration",
+      "prompt": "FIRST: read spec/005-usb-wifi-ap/{requirements.md, design.md, acceptance/usb-ap.feature}. SECOND: implement api/internal/handlers/network_ap.go with GET /api/v1/network/ap-interfaces (REQ-503), POST /api/v1/network/ap-interface (REQ-504/505/507), GET /api/v1/network/ap-status (REQ-515). Add schema v25 migration: `ALTER TABLE network_modes ADD COLUMN ap_interface_role TEXT DEFAULT NULL` (append-only per Article XIII). Trigger network-mode-switch saga on POST. Persist + read at boot (REQ-508).",
+      "files_owned": [
+        "api/internal/handlers/network_ap.go",
+        "api/internal/handlers/network_ap_test.go",
+        "api/internal/managers/ap_interface.go",
+        "api/internal/database/migrations.go"
+      ],
+      "acceptance_test": "cd api && go test -v -run TestNetworkAP ./internal/handlers/",
+      "dependencies": ["T-001"],
+      "parallelizable": false,
+      "bounded_context": "network",
+      "requirement_ids": ["REQ-503", "REQ-504", "REQ-505", "REQ-507", "REQ-508", "REQ-511", "REQ-512", "REQ-513", "REQ-515"],
+      "complexity": 6,
+      "risk_score": 0.5,
+      "max_wall_clock_minutes": 90,
+      "max_loc_delta": 1000
+    },
+    {
+      "id": "T-003",
+      "status": "pending",
+      "title": "Dashboard widget + fallback alert + TX-power clamp UI",
+      "prompt": "FIRST: read spec/005-usb-wifi-ap/{requirements.md, design.md, acceptance/usb-ap.feature}. SECOND: implement dashboard APInterfaceView.vue showing adapter list, picker, TX-power per adapter, current status badge. (REQ-510) UI shows clamped value when regional cap is enforced. (REQ-506) WebSocket subscriber catches HAL fallback event, surfaces toast + persistent banner. (REQ-516) Critical health banner when hostapd reports failure.",
+      "files_owned": [
+        "dashboard/src/views/APInterfaceView.vue",
+        "dashboard/src/stores/apInterface.ts",
+        "dashboard/src/components/APStatusBanner.vue"
+      ],
+      "acceptance_test": "cd dashboard && npm run test -- ap-interface.spec.ts",
+      "dependencies": ["T-002"],
+      "parallelizable": false,
+      "bounded_context": "network",
+      "requirement_ids": ["REQ-506", "REQ-510", "REQ-514", "REQ-516"],
+      "complexity": 4,
+      "risk_score": 0.3,
+      "max_wall_clock_minutes": 60,
+      "max_loc_delta": 700
+    }
+  ]
+}

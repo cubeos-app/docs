@@ -1,0 +1,70 @@
+{
+  "feature_id": "004-access-profiles",
+  "parent_epic": "CUBEOS-ACCESS-PROFILES",
+  "spec_revision": "1 (2026-05-17 — retrospective; Phase 1-3 shipped per roadmap §2)",
+  "tasks": [
+    {
+      "id": "T-001",
+      "status": "done",
+      "title": "Schema v20→v21: access_profiles table + initial three-profile catalog",
+      "prompt": "(RETROSPECTIVE — completed Feb 2026 per roadmap §2 'Access Profiles Phase 1 complete'.) Implemented access_profiles table, seeded existing devices as standard, exposed POST /api/v1/access-profile/switch.",
+      "files_owned": [
+        "api/internal/database/migrations.go",
+        "api/internal/handlers/access_profile.go",
+        "api/internal/managers/access_profile.go"
+      ],
+      "acceptance_test": "cd api && go test -v -run TestAccessProfilePhase1 ./internal/handlers/",
+      "dependencies": [],
+      "parallelizable": true,
+      "bounded_context": "access-profiles",
+      "requirement_ids": ["REQ-400", "REQ-401", "REQ-405", "REQ-409", "REQ-410", "REQ-421"],
+      "complexity": 4,
+      "risk_score": 0.0,
+      "max_wall_clock_minutes": 60,
+      "max_loc_delta": 700,
+      "completed_at": "2026-02-27"
+    },
+    {
+      "id": "T-002",
+      "status": "done",
+      "title": "FlowEngine access_profile_switch saga + compensating actions",
+      "prompt": "(RETROSPECTIVE — completed Feb 2026 per roadmap §2 'Access Profiles Phase 2 complete'.) Implemented the 9-step saga + compensations.",
+      "files_owned": [
+        "api/internal/flowengine/access_profile_switch.go",
+        "api/internal/flowengine/access_profile_switch_test.go"
+      ],
+      "acceptance_test": "cd api && go test -v -run TestAccessProfileSwitchSaga ./internal/flowengine/",
+      "dependencies": ["T-001"],
+      "parallelizable": false,
+      "bounded_context": "access-profiles",
+      "requirement_ids": ["REQ-406", "REQ-407", "REQ-408", "REQ-414", "REQ-415", "REQ-416", "REQ-418", "REQ-419"],
+      "complexity": 6,
+      "risk_score": 0.0,
+      "max_wall_clock_minutes": 90,
+      "max_loc_delta": 1100,
+      "completed_at": "2026-02-27"
+    },
+    {
+      "id": "T-003",
+      "status": "done",
+      "title": "Profile-aware dashboard UI + schema v23 managed-interface column",
+      "prompt": "(RETROSPECTIVE — completed Feb 2026 per roadmap §2 'Access Profiles Phase 3 complete'.) Dashboard hides nav items per active profile; schema v23 added dhcp_managed_interface.",
+      "files_owned": [
+        "dashboard/src/views/AccessProfileView.vue",
+        "dashboard/src/composables/useProfile.ts",
+        "dashboard/src/router/index.ts",
+        "api/internal/database/migrations.go"
+      ],
+      "acceptance_test": "cd dashboard && npm run test -- profile.spec.ts",
+      "dependencies": ["T-002"],
+      "parallelizable": false,
+      "bounded_context": "access-profiles",
+      "requirement_ids": ["REQ-402", "REQ-403", "REQ-404", "REQ-411", "REQ-412", "REQ-413", "REQ-420", "REQ-422", "REQ-423", "REQ-417"],
+      "complexity": 5,
+      "risk_score": 0.0,
+      "max_wall_clock_minutes": 75,
+      "max_loc_delta": 900,
+      "completed_at": "2026-02-27"
+    }
+  ]
+}

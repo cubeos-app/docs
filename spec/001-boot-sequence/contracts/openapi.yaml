@@ -1,0 +1,87 @@
+openapi: 3.0.3
+info:
+  title: CubeOS system-boot API
+  version: 0.2.0
+  description: Boot-state introspection endpoint (spec/001 REQ-114).
+servers:
+  - url: https://cubeos.cube/api/v1
+paths:
+  /system/boot:
+    get:
+      summary: Get current boot state
+      description: |
+        Returns the current boot phase, per-coreapp start/completion timings,
+        any failures, and total boot duration once complete. Dashboard polls
+        this every 2s during boot per REQ-115. Operator may also call it
+        ad-hoc to diagnose slow boots.
+      operationId: getSystemBoot
+      tags: [system]
+      responses:
+        '200':
+          description: Boot state retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BootState'
+        '500':
+          description: Boot state file missing or corrupted
+components:
+  schemas:
+    BootState:
+      type: object
+      required: [phase, started_at, coreapps]
+      properties:
+        phase:
+          type: string
+          enum: [first_boot, recovery_boot, complete, recovery_wizard]
+        started_at:
+          type: string
+          format: date-time
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+        total_ms:
+          type: integer
+          minimum: 0
+          nullable: true
+          description: Total boot duration in milliseconds; null while boot is incomplete.
+        boot_budget_exceeded:
+          type: boolean
+          description: True if total_ms > 90000 (per REQ-112).
+        active_profile:
+          type: string
+          enum: [standard, advanced, all_in_one]
+        active_mode:
+          type: string
+          enum: [offline_hotspot, wifi_router, wifi_bridge, android_tether, wifi_client, eth_client]
+        coreapps:
+          type: array
+          items:
+            $ref: '#/components/schemas/CoreappBootState'
+        failed_coreapps:
+          type: array
+          items:
+            type: string
+            description: Names of coreapps that failed to start (per REQ-109 boot continues).
+    CoreappBootState:
+      type: object
+      required: [name, status]
+      properties:
+        name:
+          type: string
+        status:
+          type: string
+          enum: [pending, starting, healthy, failed]
+        started_at:
+          type: string
+          format: date-time
+          nullable: true
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+        error:
+          type: string
+          nullable: true
+          description: Error message if status=failed.

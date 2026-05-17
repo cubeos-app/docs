@@ -1,0 +1,68 @@
+{
+  "feature_id": "006-platform-expansion",
+  "parent_epic": "CUBEOS-PHASE-11",
+  "spec_revision": "1 (2026-05-17 — initial)",
+  "tasks": [
+    {
+      "id": "T-001",
+      "status": "pending",
+      "title": "Proxmox community helper-script + submission to community-scripts repo",
+      "prompt": "FIRST: read spec/006-platform-expansion/{requirements.md, design.md, acceptance/platforms.feature}. SECOND: write releases/platforms/proxmox/install-cubeos-lxc.sh per REQ-600/601/602. Test against PVE 9.1.9 (matches the production estate). Submit PR to the community-scripts repo per REQ-600. Document the install command in cubeos.app/platforms/proxmox.",
+      "files_owned": [
+        "releases/platforms/proxmox/install-cubeos-lxc.sh",
+        "releases/platforms/proxmox/metadata.json",
+        "releases/platforms/proxmox/README.md"
+      ],
+      "acceptance_test": "ssh root@<pve-test-host> 'bash <(curl -s file:///path/to/install-cubeos-lxc.sh) && pct list | grep cubeos'",
+      "dependencies": [],
+      "parallelizable": true,
+      "bounded_context": "platforms",
+      "requirement_ids": ["REQ-600", "REQ-601", "REQ-602"],
+      "complexity": 4,
+      "risk_score": 0.4,
+      "max_wall_clock_minutes": 60,
+      "max_loc_delta": 400
+    },
+    {
+      "id": "T-002",
+      "status": "pending",
+      "title": "Physical x86 USB installer image + Calamares-derived wizard",
+      "prompt": "FIRST: read spec/006-platform-expansion/{requirements.md, design.md, acceptance/platforms.feature}. SECOND: extend the Packer x86_64 template to produce an installer USB variant per REQ-603/604/605. Use Calamares (or a stripped-down equivalent) for the partition/install wizard. UEFI default; BIOS-mode optional. Test on at least one physical x86 box + one QEMU instance.",
+      "files_owned": [
+        "releases/platforms/x86-installer/packer.json",
+        "releases/platforms/x86-installer/calamares-config/",
+        "releases/platforms/x86-installer/firstboot-installer.sh"
+      ],
+      "acceptance_test": "cd releases && packer validate platforms/x86-installer/packer.json && bash platforms/x86-installer/test-in-qemu.sh",
+      "dependencies": [],
+      "parallelizable": true,
+      "bounded_context": "platforms",
+      "requirement_ids": ["REQ-603", "REQ-604", "REQ-605"],
+      "complexity": 6,
+      "risk_score": 0.6,
+      "max_wall_clock_minutes": 120,
+      "max_loc_delta": 1000
+    },
+    {
+      "id": "T-003",
+      "status": "pending",
+      "title": "Platform-support matrix page + regression-suite expansion + community onboarding doc",
+      "prompt": "FIRST: read spec/006-platform-expansion/{requirements.md, design.md, acceptance/platforms.feature}. SECOND: publish cubeos.app/platforms with the matrix per REQ-610/612. Add releases/CONTRIBUTING-platforms.md per REQ-614. Extend the platform regression suite to include x86 physical (via QEMU) per REQ-608/609. (REQ-606/607) document BananaPi deferral + preserve releases/platforms/bananapi/ skeleton.",
+      "files_owned": [
+        "releases/CONTRIBUTING-platforms.md",
+        "releases/platforms/bananapi/PLACEHOLDER.md",
+        "website/content/platforms.md",
+        "scripts/platform-regression-x86.sh"
+      ],
+      "acceptance_test": "bash scripts/platform-regression-x86.sh && bash scripts/platform-regression-pi5.sh && bash scripts/platform-regression-lxc.sh",
+      "dependencies": ["T-002"],
+      "parallelizable": false,
+      "bounded_context": "platforms",
+      "requirement_ids": ["REQ-606", "REQ-607", "REQ-608", "REQ-609", "REQ-610", "REQ-611", "REQ-612", "REQ-613", "REQ-614", "REQ-615"],
+      "complexity": 4,
+      "risk_score": 0.3,
+      "max_wall_clock_minutes": 80,
+      "max_loc_delta": 600
+    }
+  ]
+}

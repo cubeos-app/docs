@@ -1,0 +1,76 @@
+{
+  "feature_id": "008-network-modes",
+  "parent_epic": "CUBEOS-PHASE-6",
+  "spec_revision": "1 (2026-05-17 — retrospective; Phase 6 shipped per roadmap §2)",
+  "tasks": [
+    {
+      "id": "T-001",
+      "status": "done",
+      "title": "Six-mode catalog + HAL mode-config loaders + per-mode nftables rulesets",
+      "prompt": "(RETROSPECTIVE — completed Feb 2026 per roadmap §2 'Phase 6 Network Modes DONE'.) Six modes shipped with per-mode nftables files; HAL applies them on mode-switch.",
+      "files_owned": [
+        "hal/internal/network/modes.go",
+        "hal/internal/network/firewalls/offline_hotspot.nft",
+        "hal/internal/network/firewalls/wifi_router.nft",
+        "hal/internal/network/firewalls/wifi_bridge.nft",
+        "hal/internal/network/firewalls/android_tether.nft",
+        "hal/internal/network/firewalls/wifi_client.nft",
+        "hal/internal/network/firewalls/eth_client.nft"
+      ],
+      "acceptance_test": "cd hal && go test -v -run TestNetworkModes ./internal/network/",
+      "dependencies": [],
+      "parallelizable": true,
+      "bounded_context": "network",
+      "requirement_ids": ["REQ-800", "REQ-801", "REQ-802", "REQ-807", "REQ-808", "REQ-809", "REQ-815", "REQ-816"],
+      "complexity": 6,
+      "risk_score": 0.0,
+      "max_wall_clock_minutes": 90,
+      "max_loc_delta": 1200,
+      "completed_at": "2026-02-15"
+    },
+    {
+      "id": "T-002",
+      "status": "done",
+      "title": "network-mode-switch FlowEngine saga + persistence + boot-time mode restore",
+      "prompt": "(RETROSPECTIVE — completed Feb 2026 per roadmap §2 'Phase 6 Network Modes DONE'.) Saga + compensations shipped.",
+      "files_owned": [
+        "api/internal/flowengine/network_mode_switch.go",
+        "api/internal/flowengine/network_mode_switch_test.go",
+        "api/internal/handlers/network.go",
+        "api/internal/database/migrations.go"
+      ],
+      "acceptance_test": "cd api && go test -v -run TestNetworkModeSwitch ./internal/flowengine/",
+      "dependencies": ["T-001"],
+      "parallelizable": false,
+      "bounded_context": "network",
+      "requirement_ids": ["REQ-803", "REQ-804", "REQ-805", "REQ-810", "REQ-811", "REQ-812", "REQ-813"],
+      "complexity": 7,
+      "risk_score": 0.0,
+      "max_wall_clock_minutes": 110,
+      "max_loc_delta": 1400,
+      "completed_at": "2026-02-20"
+    },
+    {
+      "id": "T-003",
+      "status": "done",
+      "title": "Dashboard mode-picker UI + WebSocket progress + WiFi credential form + regression suite",
+      "prompt": "(RETROSPECTIVE — completed Feb 2026 per roadmap §2 'Phase 6 Network Modes DONE'.) UI + regression suite shipped.",
+      "files_owned": [
+        "dashboard/src/views/NetworkModeView.vue",
+        "dashboard/src/components/WifiCredentialForm.vue",
+        "dashboard/src/stores/networkMode.ts",
+        "scripts/network-mode-regression.sh"
+      ],
+      "acceptance_test": "bash scripts/network-mode-regression.sh",
+      "dependencies": ["T-002"],
+      "parallelizable": false,
+      "bounded_context": "network",
+      "requirement_ids": ["REQ-806", "REQ-814", "REQ-817", "REQ-818", "REQ-819", "REQ-820", "REQ-821"],
+      "complexity": 5,
+      "risk_score": 0.0,
+      "max_wall_clock_minutes": 80,
+      "max_loc_delta": 1000,
+      "completed_at": "2026-02-25"
+    }
+  ]
+}

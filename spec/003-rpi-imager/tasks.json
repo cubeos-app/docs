@@ -1,0 +1,67 @@
+{
+  "feature_id": "003-rpi-imager",
+  "parent_epic": "CUBEOS-IMAGER",
+  "spec_revision": "1 (2026-05-17 — initial)",
+  "tasks": [
+    {
+      "id": "T-001",
+      "status": "pending",
+      "title": "Manifest generator + CI integration in releases/ repo",
+      "prompt": "FIRST: read spec/003-rpi-imager/{requirements.md, design.md, acceptance/imager.feature}. SECOND: implement releases/scripts/generate-pi-imager-manifest.sh that walks the Packer build outputs, computes sha256 + size per variant, assembles pi-imager-manifest.json per the schema in design.md. (REQ-300/301/313) Hook into the existing releases CI on tag-build. (REQ-302/303) Upload manifest to get.cubeos.app + verify sha256 matches actual published artifact before exposure.",
+      "files_owned": [
+        "releases/scripts/generate-pi-imager-manifest.sh",
+        "releases/scripts/upload-manifest.sh",
+        "releases/scripts/verify-manifest.sh",
+        "releases/manifests/pi-imager-template.json"
+      ],
+      "acceptance_test": "cd releases && shellcheck scripts/generate-pi-imager-manifest.sh && bash scripts/generate-pi-imager-manifest.sh --test-fixtures && jq -e '.subitems | length >= 5' tmp/manifest.json",
+      "dependencies": [],
+      "parallelizable": true,
+      "bounded_context": "release",
+      "requirement_ids": ["REQ-300", "REQ-301", "REQ-302", "REQ-303", "REQ-309", "REQ-310", "REQ-311", "REQ-312", "REQ-313", "REQ-318", "REQ-319"],
+      "complexity": 4,
+      "risk_score": 0.4,
+      "max_wall_clock_minutes": 60,
+      "max_loc_delta": 500
+    },
+    {
+      "id": "T-002",
+      "status": "pending",
+      "title": "Manifest signing + signature publishing",
+      "prompt": "FIRST: read spec/003-rpi-imager/{requirements.md, design.md}. SECOND: implement releases/scripts/sign-manifest.sh using the CubeOS release key (REQ-314). The key lives in a CI variable vault entry CUBEOS_RELEASE_PRIVATE_KEY (existing). Sign with openssl pkeyutl ECDSA. Publish signature alongside manifest at get.cubeos.app/pi-imager-manifest.json.sig. Document signature verification recipe in release-notes template.",
+      "files_owned": [
+        "releases/scripts/sign-manifest.sh",
+        "releases/scripts/verify-signature.sh",
+        "releases/docs/manifest-signing.md"
+      ],
+      "acceptance_test": "cd releases && bash scripts/sign-manifest.sh tmp/manifest.json && bash scripts/verify-signature.sh tmp/manifest.json tmp/manifest.json.sig",
+      "dependencies": ["T-001"],
+      "parallelizable": false,
+      "bounded_context": "release",
+      "requirement_ids": ["REQ-314", "REQ-315"],
+      "complexity": 3,
+      "risk_score": 0.3,
+      "max_wall_clock_minutes": 35,
+      "max_loc_delta": 200
+    },
+    {
+      "id": "T-003",
+      "status": "pending",
+      "title": "Pi Foundation submission + post-submission monitoring",
+      "prompt": "FIRST: read spec/003-rpi-imager/{requirements.md, design.md}. SECOND: this is a one-shot operational task. (REQ-307) Submit https://get.cubeos.app/pi-imager-manifest.json to the Pi Foundation via their listed submission form (URL in release-notes template). Track the submission in YouTrack CUBEOS-* issue. Once listed: (REQ-308) write a CI assertion that fails the release pipeline if the canonical manifest URL path drifts. Also write a daily cron in scripts/ that fetches the Pi Foundation catalog and verifies CubeOS is still listed; alerts to Matrix on absence.",
+      "files_owned": [
+        "scripts/check-pi-imager-catalog-listing.sh",
+        "scripts/url-stability-check.sh"
+      ],
+      "acceptance_test": "bash scripts/check-pi-imager-catalog-listing.sh && bash scripts/url-stability-check.sh",
+      "dependencies": ["T-001", "T-002"],
+      "parallelizable": false,
+      "bounded_context": "release",
+      "requirement_ids": ["REQ-307", "REQ-308", "REQ-316", "REQ-317"],
+      "complexity": 2,
+      "risk_score": 0.2,
+      "max_wall_clock_minutes": 30,
+      "max_loc_delta": 150
+    }
+  ]
+}

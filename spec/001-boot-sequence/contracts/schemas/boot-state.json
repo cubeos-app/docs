@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://cubeos.app/schemas/boot-state.json",
+  "title": "CubeOS BootState",
+  "description": "Boot-state record persisted at /cubeos/data/boot-state.json by cubeos-init.sh; consumed by GET /api/v1/system/boot.",
+  "type": "object",
+  "required": ["phase", "started_at", "coreapps"],
+  "additionalProperties": false,
+  "properties": {
+    "phase": {
+      "type": "string",
+      "enum": ["first_boot", "recovery_boot", "complete", "recovery_wizard"]
+    },
+    "started_at": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?(Z|[+-][0-9]{2}:[0-9]{2})$"
+    },
+    "completed_at": {
+      "type": ["string", "null"],
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?(Z|[+-][0-9]{2}:[0-9]{2})$"
+    },
+    "total_ms": {
+      "type": ["integer", "null"],
+      "minimum": 0
+    },
+    "boot_budget_exceeded": {
+      "type": "boolean"
+    },
+    "active_profile": {
+      "type": "string",
+      "enum": ["standard", "advanced", "all_in_one"]
+    },
+    "active_mode": {
+      "type": "string",
+      "enum": ["offline_hotspot", "wifi_router", "wifi_bridge", "android_tether", "wifi_client", "eth_client"]
+    },
+    "coreapps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "status"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {"type": "string"},
+          "status": {"type": "string", "enum": ["pending", "starting", "healthy", "failed"]},
+          "started_at": {
+            "type": ["string", "null"],
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?(Z|[+-][0-9]{2}:[0-9]{2})$"
+          },
+          "completed_at": {
+            "type": ["string", "null"],
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?(Z|[+-][0-9]{2}:[0-9]{2})$"
+          },
+          "error": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "failed_coreapps": {
+      "type": "array",
+      "items": {"type": "string"}
+    }
+  }
+}
