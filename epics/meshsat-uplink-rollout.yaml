@@ -1,0 +1,36 @@
+id: meshsat-uplink-rollout
+title: Roll out meshsat-uplink/v1 across bridge + hub + android
+youtrack_epic: IFRNLLEI01PRD-XXX  # TBD — open at first dispatch
+description: |
+  Coordinate the wire-protocol introduction across the 3 affected repos.
+  meshsat-hub side (SOS trigger + protocol parsers) lands FIRST (cloud is
+  the source of truth for protocol); meshsat bridge side then; meshsat-android
+  pair-shell + directory-sync layers ride on top.
+
+  Drift safeguard: contracts/meshsat-uplink-v1.yaml enforces the wire-format
+  parity at validator level. This epic is the dispatch coordinator.
+
+status: in-progress
+
+specs:
+  - repo: meshsat-hub
+    spec_slug: 001-sos-trigger
+    blocked_by: []
+    note: "Hub-side detector — RETROSPECTIVE, already shipped 2026-03"
+
+  - repo: meshsat
+    spec_slug: 001-pair-protocol
+    blocked_by: []
+    note: "Bridge-side pair flow — RETROSPECTIVE, already shipped 2026-03"
+
+  - repo: meshsat-android
+    spec_slug: 003-pair-shell
+    blocked_by:
+      - {repo: meshsat, spec_slug: 001-pair-protocol}
+    note: "Mobile-side pair UI rides on bridge's pair_test.go contract"
+
+  - repo: meshsat-android
+    spec_slug: 002-directory-sync
+    blocked_by:
+      - {repo: meshsat, spec_slug: 002-unified-directory}
+    note: "Mobile directory sync rides on bridge's unified-directory API"
