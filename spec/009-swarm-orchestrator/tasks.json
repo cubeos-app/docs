@@ -41,7 +41,21 @@
       "_status_note": "Per the validator C18 gate: a docs/ project-level task cannot have status=completed with cross-repo files_owned because the docs/ repo doesn't own those files. The underlying functionality IS shipped (see sister repos for the actual retrospective task status). This task tracks the cross-repo coordination, not the implementation.",
       "_cross_repo_completed_in": [
         "api"
-      ]
+      ],
+      "observability": {
+        "prometheus_metrics": [
+          "cubeos_swarm_orchestrator_requests_total",
+          "cubeos_swarm_orchestrator_request_duration_seconds",
+          "cubeos_swarm_orchestrator_errors_total"
+        ],
+        "slo_targets": {
+          "p95_latency_ms": 200,
+          "p99_latency_ms": 500,
+          "error_rate_max": 0.001,
+          "_notes": "placeholder \u2014 refine during task execution based on profiling"
+        },
+        "_notes": "Placeholder block for T-001. Replace with concrete metric names as code lands. If this task does NOT need metrics (e.g. CI/build task), replace this block with `no_observability_required: \"<reason>\"` instead."
+      }
     },
     {
       "id": "T-002",
@@ -83,7 +97,21 @@
       "_status_note": "Per the validator C18 gate: a docs/ project-level task cannot have status=completed with cross-repo files_owned because the docs/ repo doesn't own those files. The underlying functionality IS shipped (see sister repos for the actual retrospective task status). This task tracks the cross-repo coordination, not the implementation.",
       "_cross_repo_completed_in": [
         "api"
-      ]
+      ],
+      "observability": {
+        "prometheus_metrics": [
+          "cubeos_swarm_orchestrator_requests_total",
+          "cubeos_swarm_orchestrator_request_duration_seconds",
+          "cubeos_swarm_orchestrator_errors_total"
+        ],
+        "slo_targets": {
+          "p95_latency_ms": 200,
+          "p99_latency_ms": 500,
+          "error_rate_max": 0.001,
+          "_notes": "placeholder \u2014 refine during task execution based on profiling"
+        },
+        "_notes": "Placeholder block for T-002. Replace with concrete metric names as code lands. If this task does NOT need metrics (e.g. CI/build task), replace this block with `no_observability_required: \"<reason>\"` instead."
+      }
     },
     {
       "id": "T-003",
@@ -116,7 +144,21 @@
       "_cross_repo_completed_in": [
         "api",
         "dashboard"
-      ]
+      ],
+      "observability": {
+        "prometheus_metrics": [
+          "cubeos_swarm_orchestrator_requests_total",
+          "cubeos_swarm_orchestrator_request_duration_seconds",
+          "cubeos_swarm_orchestrator_errors_total"
+        ],
+        "slo_targets": {
+          "p95_latency_ms": 200,
+          "p99_latency_ms": 500,
+          "error_rate_max": 0.001,
+          "_notes": "placeholder \u2014 refine during task execution based on profiling"
+        },
+        "_notes": "Placeholder block for T-003. Replace with concrete metric names as code lands. If this task does NOT need metrics (e.g. CI/build task), replace this block with `no_observability_required: \"<reason>\"` instead."
+      }
     }
   ]
 }

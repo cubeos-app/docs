@@ -1,0 +1,179 @@
+# CubeOS family-invariants registry
+#
+# Cross-cutting invariants that span multiple component repos. The validator
+# (scripts/validate-project-spec.py C22 — cross_repo_invariant_coverage)
+# verifies that each invariant's `enforced_by` repos cite the parent Article
+# in their own component constitution.
+#
+# Format:
+#   - id: <kebab-case slug>
+#     parent_article: <roman numeral OR "I" through "XIX">
+#     short: <one-line summary>
+#     enforced_by:
+#       - {repo: <slug>, article_ref: "C-I" OR "Article I" OR "n/a" (no echo)}
+#     source: docs/constitution.md
+#
+# Lookup order during validation:
+#   1. find this file at the path PROJECT.json.parent_project.spec_home + "/family-invariants.yaml"
+#   2. for each invariant, for each enforced_by repo, ensure that repo's constitution.md
+#      contains an article that references "Article <parent_article>"
+#   3. soft check — flag missing references as warnings, don't fail validator
+
+invariants:
+  - id: hal-owns-the-host
+    parent_article: "I"
+    short: "API containers NEVER touch host services directly — all via HAL REST"
+    enforced_by:
+      - {repo: api,  article_ref: "C-I"}
+      - {repo: hal,  article_ref: "C-I"}
+      - {repo: meshsat-android, article_ref: "n/a"}  # mobile — no host
+      - {repo: meshsat-hub, article_ref: "n/a"}      # cloud — not on Pi
+      - {repo: meshsat, article_ref: "n/a"}          # runs on CubeOS but doesn't bypass HAL
+    source: docs/constitution.md §Article I
+
+  - id: docker-swarm-is-truth
+    parent_article: "IV"
+    short: "Docker Swarm is the single source of truth for container runtime state"
+    enforced_by:
+      - {repo: api,      article_ref: "C-I"}     # Orchestrator delegates to SwarmManager
+      - {repo: coreapps, article_ref: "n/a"}      # consumes the convention
+    source: docs/constitution.md §Article IV
+
+  - id: port-discipline-6xxx
+    parent_article: "V"
+    short: "All CubeOS-managed service ports inside 6000-6999"
+    enforced_by:
+      - {repo: api,      article_ref: "C-IV"}   # PortManager triple-source
+      - {repo: hal,      article_ref: "n/a"}    # HAL on 6005
+      - {repo: coreapps, article_ref: "n/a"}    # per-coreapp compose
+      - {repo: meshsat,  article_ref: "n/a"}    # bridge on 6050
+      - {repo: meshsat-hub, article_ref: "n/a"} # hub on 6070
+    source: docs/constitution.md §Article V
+
+  - id: managed-interface-dhcp-on
+    parent_article: "VI"
+    short: "Pi-hole DHCP only when access profile = all_in_one + managed interface designated"
+    enforced_by:
+      - {repo: api,  article_ref: "n/a"}   # FlowEngine workflow gates
+      - {repo: hal,  article_ref: "n/a"}   # actual DHCP toggle
+    source: docs/constitution.md §Article VI
+
+  - id: hardware-detection-drives-capabilities
+    parent_article: "VII"
+    short: "Features enable/disable based on detected hardware, not install method"
+    enforced_by:
+      - {repo: hal,        article_ref: "n/a"}     # detection runs here
+      - {repo: api,        article_ref: "n/a"}     # surfaces capabilities
+      - {repo: meshsat,    article_ref: "C-VI"}    # 10 transport adapters
+    source: docs/constitution.md §Article VII
+
+  - id: serial-port-ownership
+    parent_article: "IX"
+    short: "Only one HAL subsystem may claim each /dev/tty* port"
+    enforced_by:
+      - {repo: hal,     article_ref: "n/a"}   # serial registry (no separate package)
+      - {repo: meshsat, article_ref: "n/a"}   # per-driver claim
+    source: docs/constitution.md §Article IX
+
+  - id: cgo-disabled-pure-go
+    parent_article: "XI"
+    short: "CGO_ENABLED=0 everywhere; modernc.org/sqlite for SQLite"
+    enforced_by:
+      - {repo: api,         article_ref: "C-VI"}
+      - {repo: hal,         article_ref: "n/a"}
+      - {repo: meshsat,     article_ref: "C-I"}
+      - {repo: meshsat-hub, article_ref: "Article V"}
+      - {repo: meshsat-android, article_ref: "C-III"}  # JNI-free crypto
+    source: docs/constitution.md §Article XI
+
+  - id: swagger-annotations-mandatory
+    parent_article: "XII"
+    short: "Every Go HTTP handler has Swagger annotations; make verify-routes gates parity"
+    enforced_by:
+      - {repo: api, article_ref: "C-IX"}
+      - {repo: hal, article_ref: "C-VII"}    # /docs/openapi.yaml served by handlers/docs.go
+      - {repo: meshsat-hub, article_ref: "n/a"}  # via OpenAPI spec-generation feature
+    source: docs/constitution.md §Article XII
+
+  - id: append-only-migrations
+    parent_article: "XIII"
+    short: "Schema migrations file is append-only; never edit existing entries"
+    enforced_by:
+      - {repo: api,         article_ref: "C-VIII"}
+      - {repo: meshsat,     article_ref: "n/a"}      # SQLite per-bridge
+      - {repo: meshsat-hub, article_ref: "Article XII"}  # both sqlite + mariadb stores
+      - {repo: meshsat-android, article_ref: "C-IV"}     # Room migrations
+    source: docs/constitution.md §Article XIII
+
+  - id: local-registry-coreapp-pulls
+    parent_article: "XIV"
+    short: "Coreapps pull from localhost:5000 only, never Docker Hub at runtime"
+    enforced_by:
+      - {repo: api,      article_ref: "n/a"}   # spec/002 enforces
+      - {repo: coreapps, article_ref: "n/a"}   # compose files reference localhost:5000
+    source: docs/constitution.md §Article XIV
+
+  - id: push-to-main-auto-deploys
+    parent_article: "XV"
+    short: "Push to main triggers per-component CI auto-deploy to all registered Pi devices"
+    enforced_by:
+      - {repo: api,      article_ref: "n/a"}
+      - {repo: dashboard, article_ref: "n/a"}
+      - {repo: hal,      article_ref: "n/a"}
+      - {repo: coreapps, article_ref: "n/a"}
+      - {repo: releases, article_ref: "n/a"}
+    source: docs/constitution.md §Article XV
+
+  - id: claude-code-files-gitignored
+    parent_article: "XVII"
+    short: "CLAUDE.md and .claude/ NEVER committed; spec-kit artefacts ARE committed"
+    enforced_by:
+      - {repo: api,             article_ref: "n/a"}  # in .gitignore
+      - {repo: dashboard,       article_ref: "n/a"}
+      - {repo: hal,             article_ref: "n/a"}
+      - {repo: docs,            article_ref: "n/a"}
+      - {repo: meshsat,         article_ref: "n/a"}
+      - {repo: meshsat-android, article_ref: "n/a"}
+      - {repo: meshsat-hub,     article_ref: "n/a"}
+    source: docs/constitution.md §Article XVII
+
+  - id: parallel-dev-mr-gate
+    parent_article: "XVIII"
+    short: "Parallel-dev waves use merge/<feature_id> branches + 1 MR per feature"
+    enforced_by:
+      - {repo: api,             article_ref: "ADR-0006"}
+      - {repo: hal,             article_ref: "ADR-0007"}
+      - {repo: meshsat-android, article_ref: "ADR-0003"}
+      - {repo: meshsat,         article_ref: "C-XIV"}
+      - {repo: meshsat-hub,     article_ref: "ADR-0003"}
+    source: docs/constitution.md §Article XVIII
+
+  - id: operator-identity-on-commits
+    parent_article: "XIX"
+    short: "All commits use Kyriakos Papadopoulos / ncpjfuzl@mxmx.email via -c flags"
+    enforced_by:
+      - {repo: api,             article_ref: "n/a"}
+      - {repo: dashboard,       article_ref: "n/a"}
+      - {repo: hal,             article_ref: "n/a"}
+      - {repo: docs,            article_ref: "n/a"}
+      - {repo: meshsat,         article_ref: "n/a"}
+      - {repo: meshsat-android, article_ref: "n/a"}
+      - {repo: meshsat-hub,     article_ref: "n/a"}
+    source: docs/constitution.md §Article XIX
+
+  # MeshSat-family-only invariants (not project-level CubeOS)
+  - id: meshsat-uplink-v1-protocol-parity
+    parent_article: "n/a (MeshSat-family scope only)"
+    short: "meshsat/internal/hubreporter/protocol.go MUST stay byte-identical to meshsat-hub/internal/protocol/protocol.go via ProtocolVersion field"
+    enforced_by:
+      - {repo: meshsat,     article_ref: "C-V"}
+      - {repo: meshsat-hub, article_ref: "Article XVII"}
+    source: meshsat-hub/constitution.md §Article XVII + meshsat/constitution.md §C-V
+
+  - id: smaz2-dictionary-byte-for-byte-parity
+    parent_article: "n/a (MeshSat-family scope only)"
+    short: "SMAZ2 dictionary in meshsat-hub/internal/compress/ must be byte-identical to meshsat/internal/compress/dict_meshtastic.go"
+    enforced_by:
+      - {repo: meshsat,     article_ref: "C-III"}
+      - {repo: meshsat-hub, article_ref: "Article VI"}
+    source: meshsat-hub/constitution.md §Article VI + meshsat/constitution.md §C-III
