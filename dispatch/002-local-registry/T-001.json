@@ -1,0 +1,172 @@
+{
+  "_schema_version": "1.0.0",
+  "_generated_at": "2026-05-18T02:08:41.446154+00:00",
+  "repo": {
+    "slug": "cubeos",
+    "youtrack_prefix": "CUBEOS",
+    "matrix_room": "!iXTnQsFJahUquYPDdG:matrix.nuclearlighters.net",
+    "primary_language": "markdown",
+    "test_command": "true",
+    "lint_command": "true",
+    "security_posture": "edge-deployed; minimal attack surface; SSH hardening + fail2ban + watchdog at OS level + X-HAL-Key ACL on HAL endpoints",
+    "parent_project": null
+  },
+  "spec": {
+    "feature_id": "002-local-registry",
+    "parent_epic": "CUBEOS-REGISTRY",
+    "spec_revision": "1 (2026-05-18)",
+    "cgc_verified_at": "2026-05-18",
+    "spec_slug": "002-local-registry"
+  },
+  "task": {
+    "id": "T-001",
+    "status": "pending",
+    "title": "Registry stack compose + Swarm deploy ordering",
+    "prompt": "FIRST: read spec/002-local-registry/{requirements.md, design.md, acceptance/registry.feature}. SECOND: add coreapps/registry/docker-compose.yml per REQ-200-203. localhost:5000 bind only. Persistent volume mounted to /cubeos/data/registry. Add to cubeos-init.sh boot ordering.",
+    "files_owned": [
+      "coreapps/registry/docker-compose.yml",
+      "coreapps/registry/config.yml"
+    ],
+    "acceptance_test": "ssh root@<pi-test-host> 'docker stack services registry | grep replicated && curl -s http://localhost:5000/v2/_catalog | jq .'",
+    "dependencies": [],
+    "parallelizable": true,
+    "bounded_context": "registry",
+    "requirement_ids": [
+      "REQ-200",
+      "REQ-201",
+      "REQ-202",
+      "REQ-203"
+    ],
+    "complexity": 3,
+    "risk_score": 0.3,
+    "max_wall_clock_minutes": 40,
+    "max_loc_delta": 200,
+    "no_observability_required": "doc/config-only task \u2014 no runtime to instrument"
+  },
+  "requirements": [
+    {
+      "id": "REQ-200",
+      "body": "The system shall run a Docker registry as a Swarm stack listening on `localhost:5000`."
+    },
+    {
+      "id": "REQ-201",
+      "body": "The system shall NOT expose the registry on any network interface other than loopback."
+    },
+    {
+      "id": "REQ-202",
+      "body": "The system shall persist registry data at `/cubeos/data/registry/`."
+    },
+    {
+      "id": "REQ-203",
+      "body": "While the system is operating, the registry shall be the only image source consulted at coreapp pull time."
+    }
+  ],
+  "acceptance": [
+    {
+      "feature_file": "spec/002-local-registry/acceptance/registry.feature",
+      "scenario": "Registry binds loopback only",
+      "covers_reqs": [
+        "REQ-200",
+        "REQ-201",
+        "REQ-202",
+        "REQ-203"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/002-local-registry/acceptance/registry.feature",
+      "scenario": "Coreapp deploy fails when image missing from local registry",
+      "covers_reqs": [
+        "REQ-200",
+        "REQ-201",
+        "REQ-202",
+        "REQ-203"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/002-local-registry/acceptance/registry.feature",
+      "scenario": "Operator imports a tar-archived image",
+      "covers_reqs": [
+        "REQ-200",
+        "REQ-201",
+        "REQ-202",
+        "REQ-203"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/002-local-registry/acceptance/registry.feature",
+      "scenario": "Pull from public registry blocked in offline_hotspot mode",
+      "covers_reqs": [
+        "REQ-200",
+        "REQ-201",
+        "REQ-202",
+        "REQ-203"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/002-local-registry/acceptance/registry.feature",
+      "scenario": "GC dry-run shows reclaim estimate",
+      "covers_reqs": [
+        "REQ-200",
+        "REQ-201",
+        "REQ-202",
+        "REQ-203"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/002-local-registry/acceptance/registry.feature",
+      "scenario": "Registry status endpoint reports key metrics",
+      "covers_reqs": [
+        "REQ-200",
+        "REQ-201",
+        "REQ-202",
+        "REQ-203"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/002-local-registry/acceptance/registry.feature",
+      "scenario": "Registry unreachable blocks app-install",
+      "covers_reqs": [
+        "REQ-200",
+        "REQ-201",
+        "REQ-202",
+        "REQ-203"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    }
+  ],
+  "stride": null,
+  "family_invariants_relevant_to_this_repo": [],
+  "constitution_articles_relevant_to_files_owned": [],
+  "branch_convention": "merge/T-001",
+  "mr_template": {
+    "title_format": "feat(002-local-registry): {short_summary} (T-001)",
+    "body_must_cite": [
+      "REQ-200",
+      "REQ-201",
+      "REQ-202",
+      "REQ-203"
+    ],
+    "commit_identity_required": "Kyriakos Papadopoulos <ncpjfuzl@mxmx.email>",
+    "commit_flag_pattern": "git -c user.name=\"Kyriakos Papadopoulos\" -c user.email=\"ncpjfuzl@mxmx.email\" commit ..."
+  }
+}

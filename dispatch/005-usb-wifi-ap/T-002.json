@@ -1,0 +1,274 @@
+{
+  "_schema_version": "1.0.0",
+  "_generated_at": "2026-05-18T02:08:41.599301+00:00",
+  "repo": {
+    "slug": "cubeos",
+    "youtrack_prefix": "CUBEOS",
+    "matrix_room": "!iXTnQsFJahUquYPDdG:matrix.nuclearlighters.net",
+    "primary_language": "markdown",
+    "test_command": "true",
+    "lint_command": "true",
+    "security_posture": "edge-deployed; minimal attack surface; SSH hardening + fail2ban + watchdog at OS level + X-HAL-Key ACL on HAL endpoints",
+    "parent_project": null
+  },
+  "spec": {
+    "feature_id": "005-usb-wifi-ap",
+    "parent_epic": "CUBEOS-PHASE-10",
+    "spec_revision": "1 (2026-05-18)",
+    "cgc_verified_at": "2026-05-18",
+    "spec_slug": "005-usb-wifi-ap"
+  },
+  "task": {
+    "id": "T-002",
+    "status": "pending",
+    "title": "api AP-interface selector + Schema v27\u2192v28 + network-mode-switch workflow extension",
+    "prompt": "FIRST: read spec/005-usb-wifi-ap/{requirements.md, design.md, acceptance/usb-ap.feature}. SECOND: add api/internal/handlers/network_ap.go for /api/v1/network/ap-interfaces + /ap-interface + /ap-status per REQ-503/504/507/515. Extend api/internal/flowengine/workflows/network_mode_switch.go to handle ap_interface_role changes. Migration v27\u2192v28: ALTER TABLE network_modes ADD COLUMN ap_interface_role (append-only per Article XIII).",
+    "files_owned": [
+      "api/internal/handlers/network_ap.go",
+      "api/internal/handlers/network_ap_test.go",
+      "api/internal/database/migrations.go",
+      "api/internal/flowengine/workflows/network_mode_switch.go"
+    ],
+    "acceptance_test": "cd api && make verify-routes && go test -v -run TestNetworkAP ./internal/handlers/",
+    "dependencies": [
+      "T-001"
+    ],
+    "parallelizable": false,
+    "bounded_context": "network",
+    "requirement_ids": [
+      "REQ-503",
+      "REQ-504",
+      "REQ-505",
+      "REQ-507",
+      "REQ-508",
+      "REQ-511",
+      "REQ-512",
+      "REQ-513",
+      "REQ-515"
+    ],
+    "complexity": 6,
+    "risk_score": 0.5,
+    "max_wall_clock_minutes": 90,
+    "max_loc_delta": 1000,
+    "observability": {
+      "prometheus_metrics": [
+        "cubeos_usb_wifi_ap_requests_total",
+        "cubeos_usb_wifi_ap_request_duration_seconds",
+        "cubeos_usb_wifi_ap_errors_total"
+      ],
+      "slo_targets": {
+        "p95_latency_ms": 200,
+        "p99_latency_ms": 500,
+        "error_rate_max": 0.001,
+        "_notes": "placeholder \u2014 refine during task execution based on profiling"
+      },
+      "_notes": "Placeholder block for T-002. Replace with concrete metric names as code lands. If this task does NOT need metrics (e.g. CI/build task), replace this block with `no_observability_required: \"<reason>\"` instead."
+    }
+  },
+  "requirements": [
+    {
+      "id": "REQ-503",
+      "body": "The system shall expose `GET /api/v1/network/ap-interfaces` returning the ordered list of AP-capable interfaces with metadata."
+    },
+    {
+      "id": "REQ-504",
+      "body": "The system shall expose `POST /api/v1/network/ap-interface` to set the active AP interface."
+    },
+    {
+      "id": "REQ-505",
+      "body": "When the operator picks a new AP interface, the system shall trigger a network-mode-switch workflow that re-deploys hostapd against the new interface."
+    },
+    {
+      "id": "REQ-507",
+      "body": "The system shall persist the operator-selected AP interface in SQLite (schema v28+)."
+    },
+    {
+      "id": "REQ-508",
+      "body": "When the system boots, the system shall read the persisted AP interface before launching hostapd."
+    },
+    {
+      "id": "REQ-511",
+      "body": "The system shall reference the chosen AP interface as `ap_interface` (role-based per Article VIII)."
+    },
+    {
+      "id": "REQ-512",
+      "body": "When the AP interface role is reassigned, the system shall update firewall rules + hostapd config + Pi-hole DHCP binding atomically."
+    },
+    {
+      "id": "REQ-513",
+      "body": "When upgrading from a pre-Phase-10 CubeOS, the system shall default `ap_interface` to the onboard Pi WiFi and prompt the operator to choose otherwise."
+    },
+    {
+      "id": "REQ-515",
+      "body": "The system shall expose `GET /api/v1/network/ap-status` returning active AP interface, mode, connected-client count, current TX power."
+    }
+  ],
+  "acceptance": [
+    {
+      "feature_file": "spec/005-usb-wifi-ap/acceptance/usb-ap.feature",
+      "scenario": "HAL detects and marks both adapters AP-capable",
+      "covers_reqs": [
+        "REQ-503",
+        "REQ-504",
+        "REQ-505",
+        "REQ-507",
+        "REQ-508",
+        "REQ-511",
+        "REQ-512",
+        "REQ-513",
+        "REQ-515"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/005-usb-wifi-ap/acceptance/usb-ap.feature",
+      "scenario": "Falls back to onboard wlan0 when no USB adapter",
+      "covers_reqs": [
+        "REQ-503",
+        "REQ-504",
+        "REQ-505",
+        "REQ-507",
+        "REQ-508",
+        "REQ-511",
+        "REQ-512",
+        "REQ-513",
+        "REQ-515"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/005-usb-wifi-ap/acceptance/usb-ap.feature",
+      "scenario": "Operator picks USB adapter as AP",
+      "covers_reqs": [
+        "REQ-503",
+        "REQ-504",
+        "REQ-505",
+        "REQ-507",
+        "REQ-508",
+        "REQ-511",
+        "REQ-512",
+        "REQ-513",
+        "REQ-515"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/005-usb-wifi-ap/acceptance/usb-ap.feature",
+      "scenario": "Active USB adapter unplug triggers fallback",
+      "covers_reqs": [
+        "REQ-503",
+        "REQ-504",
+        "REQ-505",
+        "REQ-507",
+        "REQ-508",
+        "REQ-511",
+        "REQ-512",
+        "REQ-513",
+        "REQ-515"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/005-usb-wifi-ap/acceptance/usb-ap.feature",
+      "scenario": "AP interface choice survives reboot",
+      "covers_reqs": [
+        "REQ-503",
+        "REQ-504",
+        "REQ-505",
+        "REQ-507",
+        "REQ-508",
+        "REQ-511",
+        "REQ-512",
+        "REQ-513",
+        "REQ-515"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/005-usb-wifi-ap/acceptance/usb-ap.feature",
+      "scenario": "TX power clamped to regional ceiling",
+      "covers_reqs": [
+        "REQ-503",
+        "REQ-504",
+        "REQ-505",
+        "REQ-507",
+        "REQ-508",
+        "REQ-511",
+        "REQ-512",
+        "REQ-513",
+        "REQ-515"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/005-usb-wifi-ap/acceptance/usb-ap.feature",
+      "scenario": "New USB adapter does NOT auto-replace current AP",
+      "covers_reqs": [
+        "REQ-503",
+        "REQ-504",
+        "REQ-505",
+        "REQ-507",
+        "REQ-508",
+        "REQ-511",
+        "REQ-512",
+        "REQ-513",
+        "REQ-515"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/005-usb-wifi-ap/acceptance/usb-ap.feature",
+      "scenario": "hostapd failure shows critical banner",
+      "covers_reqs": [
+        "REQ-503",
+        "REQ-504",
+        "REQ-505",
+        "REQ-507",
+        "REQ-508",
+        "REQ-511",
+        "REQ-512",
+        "REQ-513",
+        "REQ-515"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    }
+  ],
+  "stride": null,
+  "family_invariants_relevant_to_this_repo": [],
+  "constitution_articles_relevant_to_files_owned": [
+    "## Article XIII \u2014 Append-only migrations"
+  ],
+  "branch_convention": "merge/T-002",
+  "mr_template": {
+    "title_format": "feat(005-usb-wifi-ap): {short_summary} (T-002)",
+    "body_must_cite": [
+      "REQ-503",
+      "REQ-504",
+      "REQ-505",
+      "REQ-507",
+      "REQ-508",
+      "REQ-511",
+      "REQ-512",
+      "REQ-513",
+      "REQ-515"
+    ],
+    "commit_identity_required": "Kyriakos Papadopoulos <ncpjfuzl@mxmx.email>",
+    "commit_flag_pattern": "git -c user.name=\"Kyriakos Papadopoulos\" -c user.email=\"ncpjfuzl@mxmx.email\" commit ..."
+  }
+}

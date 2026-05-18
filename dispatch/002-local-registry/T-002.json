@@ -1,0 +1,229 @@
+{
+  "_schema_version": "1.0.0",
+  "_generated_at": "2026-05-18T02:08:41.458393+00:00",
+  "repo": {
+    "slug": "cubeos",
+    "youtrack_prefix": "CUBEOS",
+    "matrix_room": "!iXTnQsFJahUquYPDdG:matrix.nuclearlighters.net",
+    "primary_language": "markdown",
+    "test_command": "true",
+    "lint_command": "true",
+    "security_posture": "edge-deployed; minimal attack surface; SSH hardening + fail2ban + watchdog at OS level + X-HAL-Key ACL on HAL endpoints",
+    "parent_project": null
+  },
+  "spec": {
+    "feature_id": "002-local-registry",
+    "parent_epic": "CUBEOS-REGISTRY",
+    "spec_revision": "1 (2026-05-18)",
+    "cgc_verified_at": "2026-05-18",
+    "spec_slug": "002-local-registry"
+  },
+  "task": {
+    "id": "T-002",
+    "status": "pending",
+    "title": "Registry API endpoints + dashboard widget + import action",
+    "prompt": "FIRST: read spec/002-local-registry/{requirements.md, design.md}. SECOND: extend api/internal/handlers/registry.go (CGC-verified exists) with GET /status (REQ-215) + POST /import (REQ-207/208). Pre-deploy hook validates compose images per REQ-211. Add dashboard/src/components/registry/RegistryStatusView.vue + ImportImageForm.vue (new components/registry/ feature group).",
+    "files_owned": [
+      "api/internal/handlers/registry.go",
+      "api/internal/handlers/registry_test.go",
+      "dashboard/src/components/registry/RegistryStatusView.vue",
+      "dashboard/src/components/registry/ImportImageForm.vue",
+      "dashboard/src/components/registry/index.js"
+    ],
+    "acceptance_test": "cd api && go test -v -run TestRegistry ./internal/handlers/",
+    "dependencies": [
+      "T-001"
+    ],
+    "parallelizable": false,
+    "bounded_context": "registry",
+    "requirement_ids": [
+      "REQ-207",
+      "REQ-208",
+      "REQ-209",
+      "REQ-211",
+      "REQ-215",
+      "REQ-216",
+      "REQ-217"
+    ],
+    "complexity": 5,
+    "risk_score": 0.4,
+    "max_wall_clock_minutes": 75,
+    "max_loc_delta": 900,
+    "observability": {
+      "prometheus_metrics": [
+        "cubeos_local_registry_requests_total",
+        "cubeos_local_registry_request_duration_seconds",
+        "cubeos_local_registry_errors_total"
+      ],
+      "slo_targets": {
+        "p95_latency_ms": 200,
+        "p99_latency_ms": 500,
+        "error_rate_max": 0.001,
+        "_notes": "placeholder \u2014 refine during task execution based on profiling"
+      },
+      "_notes": "Placeholder block for T-002. Replace with concrete metric names as code lands. If this task does NOT need metrics (e.g. CI/build task), replace this block with `no_observability_required: \"<reason>\"` instead."
+    }
+  },
+  "requirements": [
+    {
+      "id": "REQ-207",
+      "body": "The system shall provide a dashboard action to import a tar-archived image into the local registry from a USB stick or local file."
+    },
+    {
+      "id": "REQ-208",
+      "body": "When an imported image is added, the system shall record source filename and import timestamp to `/cubeos/data/registry/imports.log`."
+    },
+    {
+      "id": "REQ-209",
+      "body": "The system shall NOT delete imported images automatically."
+    },
+    {
+      "id": "REQ-211",
+      "body": "If a coreapp's compose file references an image not present in the local registry, then the system shall fail the deploy with an actionable error listing the missing image."
+    },
+    {
+      "id": "REQ-215",
+      "body": "The system shall expose `GET /api/v1/registry/status` returning storage usage, image count, last-import timestamp, last-GC timestamp."
+    },
+    {
+      "id": "REQ-216",
+      "body": "While the registry is unreachable, the dashboard shall display a critical-severity health banner blocking app-install actions."
+    },
+    {
+      "id": "REQ-217",
+      "body": "The system shall mirror the registry health into the `cubeos-cli system health` command output."
+    }
+  ],
+  "acceptance": [
+    {
+      "feature_file": "spec/002-local-registry/acceptance/registry.feature",
+      "scenario": "Registry binds loopback only",
+      "covers_reqs": [
+        "REQ-207",
+        "REQ-208",
+        "REQ-209",
+        "REQ-211",
+        "REQ-215",
+        "REQ-216",
+        "REQ-217"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/002-local-registry/acceptance/registry.feature",
+      "scenario": "Coreapp deploy fails when image missing from local registry",
+      "covers_reqs": [
+        "REQ-207",
+        "REQ-208",
+        "REQ-209",
+        "REQ-211",
+        "REQ-215",
+        "REQ-216",
+        "REQ-217"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/002-local-registry/acceptance/registry.feature",
+      "scenario": "Operator imports a tar-archived image",
+      "covers_reqs": [
+        "REQ-207",
+        "REQ-208",
+        "REQ-209",
+        "REQ-211",
+        "REQ-215",
+        "REQ-216",
+        "REQ-217"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/002-local-registry/acceptance/registry.feature",
+      "scenario": "Pull from public registry blocked in offline_hotspot mode",
+      "covers_reqs": [
+        "REQ-207",
+        "REQ-208",
+        "REQ-209",
+        "REQ-211",
+        "REQ-215",
+        "REQ-216",
+        "REQ-217"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/002-local-registry/acceptance/registry.feature",
+      "scenario": "GC dry-run shows reclaim estimate",
+      "covers_reqs": [
+        "REQ-207",
+        "REQ-208",
+        "REQ-209",
+        "REQ-211",
+        "REQ-215",
+        "REQ-216",
+        "REQ-217"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/002-local-registry/acceptance/registry.feature",
+      "scenario": "Registry status endpoint reports key metrics",
+      "covers_reqs": [
+        "REQ-207",
+        "REQ-208",
+        "REQ-209",
+        "REQ-211",
+        "REQ-215",
+        "REQ-216",
+        "REQ-217"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/002-local-registry/acceptance/registry.feature",
+      "scenario": "Registry unreachable blocks app-install",
+      "covers_reqs": [
+        "REQ-207",
+        "REQ-208",
+        "REQ-209",
+        "REQ-211",
+        "REQ-215",
+        "REQ-216",
+        "REQ-217"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    }
+  ],
+  "stride": null,
+  "family_invariants_relevant_to_this_repo": [],
+  "constitution_articles_relevant_to_files_owned": [],
+  "branch_convention": "merge/T-002",
+  "mr_template": {
+    "title_format": "feat(002-local-registry): {short_summary} (T-002)",
+    "body_must_cite": [
+      "REQ-207",
+      "REQ-208",
+      "REQ-209",
+      "REQ-211",
+      "REQ-215",
+      "REQ-216",
+      "REQ-217"
+    ],
+    "commit_identity_required": "Kyriakos Papadopoulos <ncpjfuzl@mxmx.email>",
+    "commit_flag_pattern": "git -c user.name=\"Kyriakos Papadopoulos\" -c user.email=\"ncpjfuzl@mxmx.email\" commit ..."
+  }
+}

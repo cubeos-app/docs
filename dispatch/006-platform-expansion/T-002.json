@@ -1,0 +1,172 @@
+{
+  "_schema_version": "1.0.0",
+  "_generated_at": "2026-05-18T02:08:41.635348+00:00",
+  "repo": {
+    "slug": "cubeos",
+    "youtrack_prefix": "CUBEOS",
+    "matrix_room": "!iXTnQsFJahUquYPDdG:matrix.nuclearlighters.net",
+    "primary_language": "markdown",
+    "test_command": "true",
+    "lint_command": "true",
+    "security_posture": "edge-deployed; minimal attack surface; SSH hardening + fail2ban + watchdog at OS level + X-HAL-Key ACL on HAL endpoints",
+    "parent_project": null
+  },
+  "spec": {
+    "feature_id": "006-platform-expansion",
+    "parent_epic": "CUBEOS-PHASE-11",
+    "spec_revision": "1 (2026-05-18)",
+    "cgc_verified_at": "2026-05-18",
+    "spec_slug": "006-platform-expansion"
+  },
+  "task": {
+    "id": "T-002",
+    "status": "pending",
+    "title": "Physical x86 USB installer with Calamares wizard",
+    "prompt": "FIRST: read spec/006-platform-expansion/{requirements.md, design.md, acceptance/platforms.feature}. SECOND: extend Packer x86_64 template to produce installer USB variant per REQ-603/604/605. Calamares-derived wizard. UEFI default; BIOS-mode wizard checkbox. Test on QEMU + physical x86.",
+    "files_owned": [
+      "releases/platforms/x86-installer/packer.json",
+      "releases/platforms/x86-installer/firstboot-installer.sh"
+    ],
+    "acceptance_test": "cd releases && packer validate platforms/x86-installer/packer.json && bash platforms/x86-installer/test-in-qemu.sh",
+    "dependencies": [],
+    "parallelizable": true,
+    "bounded_context": "platforms",
+    "requirement_ids": [
+      "REQ-603",
+      "REQ-604",
+      "REQ-605"
+    ],
+    "complexity": 6,
+    "risk_score": 0.6,
+    "max_wall_clock_minutes": 120,
+    "max_loc_delta": 1000,
+    "observability": {
+      "prometheus_metrics": [
+        "cubeos_platform_expansion_requests_total",
+        "cubeos_platform_expansion_request_duration_seconds",
+        "cubeos_platform_expansion_errors_total"
+      ],
+      "slo_targets": {
+        "p95_latency_ms": 200,
+        "p99_latency_ms": 500,
+        "error_rate_max": 0.001,
+        "_notes": "placeholder \u2014 refine during task execution based on profiling"
+      },
+      "_notes": "Placeholder block for T-002. Replace with concrete metric names as code lands. If this task does NOT need metrics (e.g. CI/build task), replace this block with `no_observability_required: \"<reason>\"` instead."
+    }
+  },
+  "requirements": [
+    {
+      "id": "REQ-603",
+      "body": "The system shall publish a bootable USB image variant for physical x86 hardware."
+    },
+    {
+      "id": "REQ-604",
+      "body": "When the operator boots from the x86 USB image, the system shall present an installation wizard that partitions, installs CubeOS, and reboots."
+    },
+    {
+      "id": "REQ-605",
+      "body": "The system shall NOT require UEFI Secure Boot disable for physical x86 installs."
+    }
+  ],
+  "acceptance": [
+    {
+      "feature_file": "spec/006-platform-expansion/acceptance/platforms.feature",
+      "scenario": "Proxmox helper script creates LXC",
+      "covers_reqs": [
+        "REQ-603",
+        "REQ-604",
+        "REQ-605"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/006-platform-expansion/acceptance/platforms.feature",
+      "scenario": "Physical x86 USB installer wizard installs CubeOS",
+      "covers_reqs": [
+        "REQ-603",
+        "REQ-604",
+        "REQ-605"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/006-platform-expansion/acceptance/platforms.feature",
+      "scenario": "Regression suite blocks release if a platform fails",
+      "covers_reqs": [
+        "REQ-603",
+        "REQ-604",
+        "REQ-605"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/006-platform-expansion/acceptance/platforms.feature",
+      "scenario": "Platform-support matrix lists current status",
+      "covers_reqs": [
+        "REQ-603",
+        "REQ-604",
+        "REQ-605"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/006-platform-expansion/acceptance/platforms.feature",
+      "scenario": "BananaPi placeholder welcomes community contributions",
+      "covers_reqs": [
+        "REQ-603",
+        "REQ-604",
+        "REQ-605"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/006-platform-expansion/acceptance/platforms.feature",
+      "scenario": "GPIO UI hidden on x86 (no GPIO hardware)",
+      "covers_reqs": [
+        "REQ-603",
+        "REQ-604",
+        "REQ-605"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/006-platform-expansion/acceptance/platforms.feature",
+      "scenario": "New-platform PR requires regression artifacts",
+      "covers_reqs": [
+        "REQ-603",
+        "REQ-604",
+        "REQ-605"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    }
+  ],
+  "stride": null,
+  "family_invariants_relevant_to_this_repo": [],
+  "constitution_articles_relevant_to_files_owned": [],
+  "branch_convention": "merge/T-002",
+  "mr_template": {
+    "title_format": "feat(006-platform-expansion): {short_summary} (T-002)",
+    "body_must_cite": [
+      "REQ-603",
+      "REQ-604",
+      "REQ-605"
+    ],
+    "commit_identity_required": "Kyriakos Papadopoulos <ncpjfuzl@mxmx.email>",
+    "commit_flag_pattern": "git -c user.name=\"Kyriakos Papadopoulos\" -c user.email=\"ncpjfuzl@mxmx.email\" commit ..."
+  }
+}

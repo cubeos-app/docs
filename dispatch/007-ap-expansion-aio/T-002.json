@@ -1,0 +1,293 @@
+{
+  "_schema_version": "1.0.0",
+  "_generated_at": "2026-05-18T02:08:41.672500+00:00",
+  "repo": {
+    "slug": "cubeos",
+    "youtrack_prefix": "CUBEOS",
+    "matrix_room": "!iXTnQsFJahUquYPDdG:matrix.nuclearlighters.net",
+    "primary_language": "markdown",
+    "test_command": "true",
+    "lint_command": "true",
+    "security_posture": "edge-deployed; minimal attack surface; SSH hardening + fail2ban + watchdog at OS level + X-HAL-Key ACL on HAL endpoints",
+    "parent_project": null
+  },
+  "spec": {
+    "feature_id": "007-ap-expansion-aio",
+    "parent_epic": "CUBEOS-PHASE-12",
+    "spec_revision": "1 (2026-05-18)",
+    "cgc_verified_at": "2026-05-18",
+    "spec_slug": "007-ap-expansion-aio"
+  },
+  "task": {
+    "id": "T-002",
+    "status": "pending",
+    "title": "Local CA generation + per-cert issuer + NPM TLS wiring + auto-renewal workflow",
+    "prompt": "FIRST: read spec/007-ap-expansion-aio/{requirements.md, design.md, acceptance/ap-aio.feature}. SECOND: implement hal/internal/handlers/security_ca.go to generate CA on first boot per REQ-707/708. Wire NPM to consume cubeos.cube cert per REQ-709. Add api/internal/flowengine/workflows/cert_renewal.go for 30d-before-expiry renewal per REQ-713. Expose GET /api/v1/security/ca-cert per REQ-710. POST /security/ca-cert/rotate per REQ-714/715/716.",
+    "files_owned": [
+      "hal/internal/handlers/security_ca.go",
+      "hal/internal/handlers/security_ca_test.go",
+      "api/internal/handlers/security_cacert.go",
+      "api/internal/flowengine/workflows/cert_renewal.go",
+      "coreapps/npm/cubeos-cube-vhost.conf"
+    ],
+    "acceptance_test": "ssh root@<pi-test> 'openssl s_client -showcerts -connect cubeos.cube:443 < /dev/null 2>/dev/null | openssl x509 -noout -subject | grep cubeos.cube'",
+    "dependencies": [
+      "T-001"
+    ],
+    "parallelizable": false,
+    "bounded_context": "hal",
+    "requirement_ids": [
+      "REQ-707",
+      "REQ-708",
+      "REQ-709",
+      "REQ-710",
+      "REQ-713",
+      "REQ-714",
+      "REQ-715",
+      "REQ-716"
+    ],
+    "complexity": 7,
+    "risk_score": 0.6,
+    "max_wall_clock_minutes": 110,
+    "max_loc_delta": 1100,
+    "observability": {
+      "prometheus_metrics": [
+        "cubeos_ap_expansion_aio_requests_total",
+        "cubeos_ap_expansion_aio_request_duration_seconds",
+        "cubeos_ap_expansion_aio_errors_total"
+      ],
+      "slo_targets": {
+        "p95_latency_ms": 200,
+        "p99_latency_ms": 500,
+        "error_rate_max": 0.001,
+        "_notes": "placeholder \u2014 refine during task execution based on profiling"
+      },
+      "_notes": "Placeholder block for T-002. Replace with concrete metric names as code lands. If this task does NOT need metrics (e.g. CI/build task), replace this block with `no_observability_required: \"<reason>\"` instead."
+    }
+  },
+  "requirements": [
+    {
+      "id": "REQ-707",
+      "body": "The system shall generate a local Certificate Authority on first boot, persist private key + cert at `/cubeos/data/ca/`."
+    },
+    {
+      "id": "REQ-708",
+      "body": "The system shall issue a TLS certificate for `cubeos.cube` + every coreapp FQDN signed by the local CA."
+    },
+    {
+      "id": "REQ-709",
+      "body": "The system shall configure NPM (the reverse proxy) to serve the local-CA-signed cert for `cubeos.cube`."
+    },
+    {
+      "id": "REQ-710",
+      "body": "The system shall expose `GET /api/v1/security/ca-cert` returning the CA's public cert in PEM format."
+    },
+    {
+      "id": "REQ-713",
+      "body": "The system shall renew the cubeos.cube cert 30 days before expiry."
+    },
+    {
+      "id": "REQ-714",
+      "body": "The system shall expose `POST /api/v1/security/ca-cert/rotate` for operator-triggered CA rotation."
+    },
+    {
+      "id": "REQ-715",
+      "body": "When the CA is rotated, the system shall re-issue all dependent certs + restart NPM atomically."
+    },
+    {
+      "id": "REQ-716",
+      "body": "When the CA is rotated, the system shall log the rotation event to `/cubeos/data/audit.log`."
+    }
+  ],
+  "acceptance": [
+    {
+      "feature_file": "spec/007-ap-expansion-aio/acceptance/ap-aio.feature",
+      "scenario": "Selector lists all candidates",
+      "covers_reqs": [
+        "REQ-707",
+        "REQ-708",
+        "REQ-709",
+        "REQ-710",
+        "REQ-713",
+        "REQ-714",
+        "REQ-715",
+        "REQ-716"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/007-ap-expansion-aio/acceptance/ap-aio.feature",
+      "scenario": "Picking managed interface enables DHCP on it",
+      "covers_reqs": [
+        "REQ-707",
+        "REQ-708",
+        "REQ-709",
+        "REQ-710",
+        "REQ-713",
+        "REQ-714",
+        "REQ-715",
+        "REQ-716"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/007-ap-expansion-aio/acceptance/ap-aio.feature",
+      "scenario": "Cannot set same interface as both managed and uplink",
+      "covers_reqs": [
+        "REQ-707",
+        "REQ-708",
+        "REQ-709",
+        "REQ-710",
+        "REQ-713",
+        "REQ-714",
+        "REQ-715",
+        "REQ-716"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/007-ap-expansion-aio/acceptance/ap-aio.feature",
+      "scenario": "Local CA issues cubeos.cube cert at first boot",
+      "covers_reqs": [
+        "REQ-707",
+        "REQ-708",
+        "REQ-709",
+        "REQ-710",
+        "REQ-713",
+        "REQ-714",
+        "REQ-715",
+        "REQ-716"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/007-ap-expansion-aio/acceptance/ap-aio.feature",
+      "scenario": "Operator downloads CA cert",
+      "covers_reqs": [
+        "REQ-707",
+        "REQ-708",
+        "REQ-709",
+        "REQ-710",
+        "REQ-713",
+        "REQ-714",
+        "REQ-715",
+        "REQ-716"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/007-ap-expansion-aio/acceptance/ap-aio.feature",
+      "scenario": "Operator clicks through TLS warning to /trust-ca",
+      "covers_reqs": [
+        "REQ-707",
+        "REQ-708",
+        "REQ-709",
+        "REQ-710",
+        "REQ-713",
+        "REQ-714",
+        "REQ-715",
+        "REQ-716"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/007-ap-expansion-aio/acceptance/ap-aio.feature",
+      "scenario": "Dashboard remains accessible pre-trust",
+      "covers_reqs": [
+        "REQ-707",
+        "REQ-708",
+        "REQ-709",
+        "REQ-710",
+        "REQ-713",
+        "REQ-714",
+        "REQ-715",
+        "REQ-716"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/007-ap-expansion-aio/acceptance/ap-aio.feature",
+      "scenario": "Cert auto-renews 30 days before expiry",
+      "covers_reqs": [
+        "REQ-707",
+        "REQ-708",
+        "REQ-709",
+        "REQ-710",
+        "REQ-713",
+        "REQ-714",
+        "REQ-715",
+        "REQ-716"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/007-ap-expansion-aio/acceptance/ap-aio.feature",
+      "scenario": "CA rotation re-issues all dependent certs",
+      "covers_reqs": [
+        "REQ-707",
+        "REQ-708",
+        "REQ-709",
+        "REQ-710",
+        "REQ-713",
+        "REQ-714",
+        "REQ-715",
+        "REQ-716"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/007-ap-expansion-aio/acceptance/ap-aio.feature",
+      "scenario": "cubeos-cli auto-discovers CA via mDNS",
+      "covers_reqs": [
+        "REQ-707",
+        "REQ-708",
+        "REQ-709",
+        "REQ-710",
+        "REQ-713",
+        "REQ-714",
+        "REQ-715",
+        "REQ-716"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    }
+  ],
+  "stride": null,
+  "family_invariants_relevant_to_this_repo": [],
+  "constitution_articles_relevant_to_files_owned": [],
+  "branch_convention": "merge/T-002",
+  "mr_template": {
+    "title_format": "feat(007-ap-expansion-aio): {short_summary} (T-002)",
+    "body_must_cite": [
+      "REQ-707",
+      "REQ-708",
+      "REQ-709",
+      "REQ-710",
+      "REQ-713",
+      "REQ-714",
+      "REQ-715",
+      "REQ-716"
+    ],
+    "commit_identity_required": "Kyriakos Papadopoulos <ncpjfuzl@mxmx.email>",
+    "commit_flag_pattern": "git -c user.name=\"Kyriakos Papadopoulos\" -c user.email=\"ncpjfuzl@mxmx.email\" commit ..."
+  }
+}

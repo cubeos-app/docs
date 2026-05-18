@@ -1,0 +1,370 @@
+{
+  "_schema_version": "1.0.0",
+  "_generated_at": "2026-05-18T02:08:41.734482+00:00",
+  "repo": {
+    "slug": "cubeos",
+    "youtrack_prefix": "CUBEOS",
+    "matrix_room": "!iXTnQsFJahUquYPDdG:matrix.nuclearlighters.net",
+    "primary_language": "markdown",
+    "test_command": "true",
+    "lint_command": "true",
+    "security_posture": "edge-deployed; minimal attack surface; SSH hardening + fail2ban + watchdog at OS level + X-HAL-Key ACL on HAL endpoints",
+    "parent_project": null
+  },
+  "spec": {
+    "feature_id": "009-swarm-orchestrator",
+    "parent_epic": "CUBEOS-HYDRA-FIX",
+    "spec_revision": "1 (2026-05-18 \u2014 retrospective; CGC-verified)",
+    "cgc_verified_at": "2026-05-18",
+    "spec_slug": "009-swarm-orchestrator"
+  },
+  "task": {
+    "id": "T-001",
+    "status": "pending",
+    "title": "Orchestrator + SwarmManager + DockerManager + PortManager (triple-source) shipped",
+    "prompt": "(RETROSPECTIVE \u2014 completed Jan-Feb 2026 per roadmap.) CGC-verified shipped: api/internal/managers/orchestrator.go (type Orchestrator at line 27), swarm.go, docker.go, ports_new.go (PortManager with DB+Swarm+HAL validation per REQ-909).",
+    "files_owned": [
+      "api/internal/managers/orchestrator.go",
+      "api/internal/managers/orchestrator_test.go",
+      "api/internal/managers/swarm.go",
+      "api/internal/managers/docker.go",
+      "api/internal/managers/ports_new.go",
+      "api/internal/managers/ports_test.go"
+    ],
+    "acceptance_test": "cd api && go test -v -run TestOrchestrator ./internal/managers/ && go test -v -run TestPortManager ./internal/managers/",
+    "dependencies": [],
+    "parallelizable": true,
+    "bounded_context": "orchestrator",
+    "requirement_ids": [
+      "REQ-900",
+      "REQ-901",
+      "REQ-902",
+      "REQ-903",
+      "REQ-904",
+      "REQ-905",
+      "REQ-909",
+      "REQ-910",
+      "REQ-911",
+      "REQ-915"
+    ],
+    "complexity": 8,
+    "risk_score": 0.0,
+    "max_wall_clock_minutes": 180,
+    "max_loc_delta": 2200,
+    "completed_at": "2026-02-10",
+    "_status_note": "Per the validator C18 gate: a docs/ project-level task cannot have status=completed with cross-repo files_owned because the docs/ repo doesn't own those files. The underlying functionality IS shipped (see sister repos for the actual retrospective task status). This task tracks the cross-repo coordination, not the implementation.",
+    "_cross_repo_completed_in": [
+      "api"
+    ],
+    "observability": {
+      "prometheus_metrics": [
+        "cubeos_swarm_orchestrator_requests_total",
+        "cubeos_swarm_orchestrator_request_duration_seconds",
+        "cubeos_swarm_orchestrator_errors_total"
+      ],
+      "slo_targets": {
+        "p95_latency_ms": 200,
+        "p99_latency_ms": 500,
+        "error_rate_max": 0.001,
+        "_notes": "placeholder \u2014 refine during task execution based on profiling"
+      },
+      "_notes": "Placeholder block for T-001. Replace with concrete metric names as code lands. If this task does NOT need metrics (e.g. CI/build task), replace this block with `no_observability_required: \"<reason>\"` instead."
+    }
+  },
+  "requirements": [
+    {
+      "id": "REQ-900",
+      "body": "The system shall route every container lifecycle operation through the single Orchestrator at `api/internal/managers/orchestrator.go:27`."
+    },
+    {
+      "id": "REQ-901",
+      "body": "The system shall NOT permit any other code path to call Docker directly except via Orchestrator \u2192 DockerManager (`api/internal/managers/docker.go`) or SwarmManager (`api/internal/managers/swarm.go`)."
+    },
+    {
+      "id": "REQ-902",
+      "body": "The system shall delegate all Docker Swarm API calls to a single SwarmManager."
+    },
+    {
+      "id": "REQ-903",
+      "body": "The system shall use a single `apps` table as the source of truth for installed apps."
+    },
+    {
+      "id": "REQ-904",
+      "body": "The system shall start every coreapp + user app as a Docker Swarm service, NEVER as `docker run`."
+    },
+    {
+      "id": "REQ-905",
+      "body": "The system shall configure each service with `restart_policy: condition: any` so Swarm restarts on container failure."
+    },
+    {
+      "id": "REQ-909",
+      "body": "The system shall allocate user-app ports via the PortManager at `api/internal/managers/ports_new.go` with triple-source validation (DB + Swarm + HAL)."
+    },
+    {
+      "id": "REQ-910",
+      "body": "When a user app is uninstalled, the system shall release its port back to the available pool."
+    },
+    {
+      "id": "REQ-911",
+      "body": "The system shall fail an install with HTTP 409 if no port is available in the 6100-6999 range."
+    },
+    {
+      "id": "REQ-915",
+      "body": "The system shall apply `--task-history-limit 1` to Swarm to bound `tasks.db` memory (Article IV)."
+    }
+  ],
+  "acceptance": [
+    {
+      "feature_file": "spec/009-swarm-orchestrator/acceptance/orchestrator.feature",
+      "scenario": "Direct Docker calls outside Orchestrator are forbidden",
+      "covers_reqs": [
+        "REQ-900",
+        "REQ-901",
+        "REQ-902",
+        "REQ-903",
+        "REQ-904",
+        "REQ-905",
+        "REQ-909",
+        "REQ-910",
+        "REQ-911",
+        "REQ-915"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/009-swarm-orchestrator/acceptance/orchestrator.feature",
+      "scenario": "Only apps table receives writes",
+      "covers_reqs": [
+        "REQ-900",
+        "REQ-901",
+        "REQ-902",
+        "REQ-903",
+        "REQ-904",
+        "REQ-905",
+        "REQ-909",
+        "REQ-910",
+        "REQ-911",
+        "REQ-915"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/009-swarm-orchestrator/acceptance/orchestrator.feature",
+      "scenario": "Swarm reconciliation restarts a killed container",
+      "covers_reqs": [
+        "REQ-900",
+        "REQ-901",
+        "REQ-902",
+        "REQ-903",
+        "REQ-904",
+        "REQ-905",
+        "REQ-909",
+        "REQ-910",
+        "REQ-911",
+        "REQ-915"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/009-swarm-orchestrator/acceptance/orchestrator.feature",
+      "scenario": "Install workflow compensation rolls back cleanly",
+      "covers_reqs": [
+        "REQ-900",
+        "REQ-901",
+        "REQ-902",
+        "REQ-903",
+        "REQ-904",
+        "REQ-905",
+        "REQ-909",
+        "REQ-910",
+        "REQ-911",
+        "REQ-915"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/009-swarm-orchestrator/acceptance/orchestrator.feature",
+      "scenario": "Port pool exhaustion returns HTTP 409",
+      "covers_reqs": [
+        "REQ-900",
+        "REQ-901",
+        "REQ-902",
+        "REQ-903",
+        "REQ-904",
+        "REQ-905",
+        "REQ-909",
+        "REQ-910",
+        "REQ-911",
+        "REQ-915"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/009-swarm-orchestrator/acceptance/orchestrator.feature",
+      "scenario": "CasaOS compose transformed inside activity",
+      "covers_reqs": [
+        "REQ-900",
+        "REQ-901",
+        "REQ-902",
+        "REQ-903",
+        "REQ-904",
+        "REQ-905",
+        "REQ-909",
+        "REQ-910",
+        "REQ-911",
+        "REQ-915"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/009-swarm-orchestrator/acceptance/orchestrator.feature",
+      "scenario": "Swarm initialised with --task-history-limit 1",
+      "covers_reqs": [
+        "REQ-900",
+        "REQ-901",
+        "REQ-902",
+        "REQ-903",
+        "REQ-904",
+        "REQ-905",
+        "REQ-909",
+        "REQ-910",
+        "REQ-911",
+        "REQ-915"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/009-swarm-orchestrator/acceptance/orchestrator.feature",
+      "scenario": "Swarm GUI hidden in standard profile",
+      "covers_reqs": [
+        "REQ-900",
+        "REQ-901",
+        "REQ-902",
+        "REQ-903",
+        "REQ-904",
+        "REQ-905",
+        "REQ-909",
+        "REQ-910",
+        "REQ-911",
+        "REQ-915"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/009-swarm-orchestrator/acceptance/orchestrator.feature",
+      "scenario": "No third-party Swarm GUI",
+      "covers_reqs": [
+        "REQ-900",
+        "REQ-901",
+        "REQ-902",
+        "REQ-903",
+        "REQ-904",
+        "REQ-905",
+        "REQ-909",
+        "REQ-910",
+        "REQ-911",
+        "REQ-915"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/009-swarm-orchestrator/acceptance/orchestrator.feature",
+      "scenario": "12 workflows are present",
+      "covers_reqs": [
+        "REQ-900",
+        "REQ-901",
+        "REQ-902",
+        "REQ-903",
+        "REQ-904",
+        "REQ-905",
+        "REQ-909",
+        "REQ-910",
+        "REQ-911",
+        "REQ-915"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/009-swarm-orchestrator/acceptance/orchestrator.feature",
+      "scenario": "14 activities are present",
+      "covers_reqs": [
+        "REQ-900",
+        "REQ-901",
+        "REQ-902",
+        "REQ-903",
+        "REQ-904",
+        "REQ-905",
+        "REQ-909",
+        "REQ-910",
+        "REQ-911",
+        "REQ-915"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/009-swarm-orchestrator/acceptance/orchestrator.feature",
+      "scenario": "No managers/compose.go file",
+      "covers_reqs": [
+        "REQ-900",
+        "REQ-901",
+        "REQ-902",
+        "REQ-903",
+        "REQ-904",
+        "REQ-905",
+        "REQ-909",
+        "REQ-910",
+        "REQ-911",
+        "REQ-915"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    }
+  ],
+  "stride": null,
+  "family_invariants_relevant_to_this_repo": [],
+  "constitution_articles_relevant_to_files_owned": [
+    "## Article IV \u2014 Docker Swarm is truth",
+    "## Article V \u2014 Port discipline (6xxx scheme)"
+  ],
+  "branch_convention": "merge/T-001",
+  "mr_template": {
+    "title_format": "feat(009-swarm-orchestrator): {short_summary} (T-001)",
+    "body_must_cite": [
+      "REQ-900",
+      "REQ-901",
+      "REQ-902",
+      "REQ-903",
+      "REQ-904",
+      "REQ-905",
+      "REQ-909",
+      "REQ-910",
+      "REQ-911",
+      "REQ-915"
+    ],
+    "commit_identity_required": "Kyriakos Papadopoulos <ncpjfuzl@mxmx.email>",
+    "commit_flag_pattern": "git -c user.name=\"Kyriakos Papadopoulos\" -c user.email=\"ncpjfuzl@mxmx.email\" commit ..."
+  }
+}

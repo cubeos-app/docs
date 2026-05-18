@@ -1,0 +1,264 @@
+{
+  "_schema_version": "1.0.0",
+  "_generated_at": "2026-05-18T02:08:41.555013+00:00",
+  "repo": {
+    "slug": "cubeos",
+    "youtrack_prefix": "CUBEOS",
+    "matrix_room": "!iXTnQsFJahUquYPDdG:matrix.nuclearlighters.net",
+    "primary_language": "markdown",
+    "test_command": "true",
+    "lint_command": "true",
+    "security_posture": "edge-deployed; minimal attack surface; SSH hardening + fail2ban + watchdog at OS level + X-HAL-Key ACL on HAL endpoints",
+    "parent_project": null
+  },
+  "spec": {
+    "feature_id": "004-access-profiles",
+    "parent_epic": "CUBEOS-ACCESS-PROFILES",
+    "spec_revision": "1 (2026-05-18 \u2014 retrospective; CGC-verified)",
+    "cgc_verified_at": "2026-05-18",
+    "spec_slug": "004-access-profiles"
+  },
+  "task": {
+    "id": "T-002",
+    "status": "pending",
+    "title": "Profile-aware dashboard UI shipped (settings tab + progress modal + Swarm-GUI hide)",
+    "prompt": "(RETROSPECTIVE \u2014 completed Feb 2026 per roadmap.) Shipped CGC-verified components: dashboard/src/components/settings/AccessProfileSettings.vue, ProfileSwitchProgressModal.vue, ProfilesTab.vue. Swarm-GUI gating (REQ-412) hides components/swarm/SwarmOverview.vue + StackList.vue when profile=standard.",
+    "files_owned": [
+      "dashboard/src/components/settings/AccessProfileSettings.vue",
+      "dashboard/src/components/settings/ProfileSwitchProgressModal.vue",
+      "dashboard/src/components/settings/ProfilesTab.vue"
+    ],
+    "acceptance_test": "cd dashboard && npm run test -- AccessProfile",
+    "dependencies": [
+      "T-001"
+    ],
+    "parallelizable": false,
+    "bounded_context": "access-profiles",
+    "requirement_ids": [
+      "REQ-402",
+      "REQ-403",
+      "REQ-404",
+      "REQ-411",
+      "REQ-412",
+      "REQ-413",
+      "REQ-424"
+    ],
+    "complexity": 5,
+    "risk_score": 0.0,
+    "max_wall_clock_minutes": 75,
+    "max_loc_delta": 900,
+    "completed_at": "2026-02-27",
+    "_status_note": "Per the validator C18 gate: a docs/ project-level task cannot have status=completed with cross-repo files_owned because the docs/ repo doesn't own those files. The underlying functionality IS shipped (see sister repos for the actual retrospective task status). This task tracks the cross-repo coordination, not the implementation.",
+    "_cross_repo_completed_in": [
+      "dashboard"
+    ],
+    "observability": {
+      "prometheus_metrics": [
+        "cubeos_access_profiles_requests_total",
+        "cubeos_access_profiles_request_duration_seconds",
+        "cubeos_access_profiles_errors_total"
+      ],
+      "slo_targets": {
+        "p95_latency_ms": 200,
+        "p99_latency_ms": 500,
+        "error_rate_max": 0.001,
+        "_notes": "placeholder \u2014 refine during task execution based on profiling"
+      },
+      "_notes": "Placeholder block for T-002. Replace with concrete metric names as code lands. If this task does NOT need metrics (e.g. CI/build task), replace this block with `no_observability_required: \"<reason>\"` instead."
+    }
+  },
+  "requirements": [
+    {
+      "id": "REQ-402",
+      "body": "While the operator is in `standard` profile, the system shall expose only consumer-grade features."
+    },
+    {
+      "id": "REQ-403",
+      "body": "While the operator is in `advanced` profile, the system shall additionally expose engineer-grade surfaces (Swarm GUI, FlowEngine inspector, compose editor)."
+    },
+    {
+      "id": "REQ-404",
+      "body": "While the operator is in `all_in_one` profile, the system shall additionally enable managed-interface DHCP (per Article VI)."
+    },
+    {
+      "id": "REQ-411",
+      "body": "The system shall hide UI surfaces disabled by the current profile from the dashboard navigation menu (component `dashboard/src/components/settings/AccessProfileSettings.vue` controls visibility)."
+    },
+    {
+      "id": "REQ-412",
+      "body": "While the operator is in `standard` profile, the system shall hide the Swarm GUI components (`dashboard/src/components/swarm/SwarmOverview.vue` + `StackList.vue`)."
+    },
+    {
+      "id": "REQ-413",
+      "body": "When the operator opens the profile-switcher (`dashboard/src/components/settings/ProfilesTab.vue`), the system shall display a clear summary of what each profile enables."
+    },
+    {
+      "id": "REQ-424",
+      "body": "While the workflow runs, the system shall surface per-step progress to the dashboard via `dashboard/src/components/settings/ProfileSwitchProgressModal.vue` (CGC-verified shipped)."
+    }
+  ],
+  "acceptance": [
+    {
+      "feature_file": "spec/004-access-profiles/acceptance/access-profile.feature",
+      "scenario": "Default profile after first-boot is standard",
+      "covers_reqs": [
+        "REQ-402",
+        "REQ-403",
+        "REQ-404",
+        "REQ-411",
+        "REQ-412",
+        "REQ-413",
+        "REQ-424"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/004-access-profiles/acceptance/access-profile.feature",
+      "scenario": "Standard profile hides Swarm-GUI components",
+      "covers_reqs": [
+        "REQ-402",
+        "REQ-403",
+        "REQ-404",
+        "REQ-411",
+        "REQ-412",
+        "REQ-413",
+        "REQ-424"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/004-access-profiles/acceptance/access-profile.feature",
+      "scenario": "Switching to advanced activates Swarm GUI",
+      "covers_reqs": [
+        "REQ-402",
+        "REQ-403",
+        "REQ-404",
+        "REQ-411",
+        "REQ-412",
+        "REQ-413",
+        "REQ-424"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/004-access-profiles/acceptance/access-profile.feature",
+      "scenario": "Switching to all_in_one enables DHCP with managed interface",
+      "covers_reqs": [
+        "REQ-402",
+        "REQ-403",
+        "REQ-404",
+        "REQ-411",
+        "REQ-412",
+        "REQ-413",
+        "REQ-424"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/004-access-profiles/acceptance/access-profile.feature",
+      "scenario": "DHCP enable rejected when profile != all_in_one",
+      "covers_reqs": [
+        "REQ-402",
+        "REQ-403",
+        "REQ-404",
+        "REQ-411",
+        "REQ-412",
+        "REQ-413",
+        "REQ-424"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/004-access-profiles/acceptance/access-profile.feature",
+      "scenario": "Failed switch rolls back cleanly",
+      "covers_reqs": [
+        "REQ-402",
+        "REQ-403",
+        "REQ-404",
+        "REQ-411",
+        "REQ-412",
+        "REQ-413",
+        "REQ-424"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/004-access-profiles/acceptance/access-profile.feature",
+      "scenario": "Switch progress surfaces in the modal",
+      "covers_reqs": [
+        "REQ-402",
+        "REQ-403",
+        "REQ-404",
+        "REQ-411",
+        "REQ-412",
+        "REQ-413",
+        "REQ-424"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/004-access-profiles/acceptance/access-profile.feature",
+      "scenario": "Custom profile name rejected",
+      "covers_reqs": [
+        "REQ-402",
+        "REQ-403",
+        "REQ-404",
+        "REQ-411",
+        "REQ-412",
+        "REQ-413",
+        "REQ-424"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    },
+    {
+      "feature_file": "spec/004-access-profiles/acceptance/access-profile.feature",
+      "scenario": "History endpoint returns recent switches",
+      "covers_reqs": [
+        "REQ-402",
+        "REQ-403",
+        "REQ-404",
+        "REQ-411",
+        "REQ-412",
+        "REQ-413",
+        "REQ-424"
+      ],
+      "status": "pending",
+      "test_file": null,
+      "test_function": null
+    }
+  ],
+  "stride": null,
+  "family_invariants_relevant_to_this_repo": [],
+  "constitution_articles_relevant_to_files_owned": [],
+  "branch_convention": "merge/T-002",
+  "mr_template": {
+    "title_format": "feat(004-access-profiles): {short_summary} (T-002)",
+    "body_must_cite": [
+      "REQ-402",
+      "REQ-403",
+      "REQ-404",
+      "REQ-411",
+      "REQ-412",
+      "REQ-413",
+      "REQ-424"
+    ],
+    "commit_identity_required": "Kyriakos Papadopoulos <ncpjfuzl@mxmx.email>",
+    "commit_flag_pattern": "git -c user.name=\"Kyriakos Papadopoulos\" -c user.email=\"ncpjfuzl@mxmx.email\" commit ..."
+  }
+}
