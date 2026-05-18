@@ -1,0 +1,55 @@
+# Contract registry — meshsat-uplink-v1
+#
+# Wire-protocol parity contract between the bridge (meshsat) and hub
+# (meshsat-hub). Both sides MUST agree on the type registry and protocol
+# version constant.
+#
+# Validator: scripts/validate-project-spec.py C26 (cross_spec_contract_drift)
+# reads every contracts/*.yaml at the family-spec-home and:
+#   - greps each `required_anchors` token in every file listed under `files`
+#   - if `value_anchors` is set, verifies the literal value matches across files
+#   - if `last_known_sha256` is set, warns when current SHA diverges (drift signal,
+#     not a hard fail — a deliberate change just needs the sha refreshed)
+#
+# When you intentionally change one side, refresh `last_known_sha256` for THAT
+# file in the same commit. The validator will then warn about the OTHER file
+# being out of sync until you cross-update it.
+
+id: meshsat-uplink-v1
+title: meshsat <-> meshsat-hub wire protocol
+description: |
+  Sparkplug-B-inspired binary protocol that carries bridge births/deaths,
+  device telemetry, commands, and SOS events between meshsat bridges (on Pi 5)
+  and meshsat-hub (cloud / Tier 2 cluster). Version constant + type registry
+  MUST stay in lock-step on both sides.
+parent_articles:
+  - "meshsat-hub Article XVII"
+  - "meshsat C-V"
+
+files:
+  - meshsat/internal/hubreporter/protocol.go
+  - meshsat-hub/internal/protocol/protocol.go
+
+required_anchors:
+  - const ProtocolVersion
+  - type BridgeBirth
+  - type BridgeDeath
+  - type BridgeHealth
+  - type BurstQueueInfo
+  - type Command
+  - type CommandResponse
+  - type DeviceBirth
+  - type DeviceDeath
+  - type DevicePosition
+
+value_anchors:
+  - pattern: 'ProtocolVersion = "meshsat-uplink/v1"'
+    description: protocol version constant must remain "meshsat-uplink/v1"
+
+last_known_sha256:
+  meshsat/internal/hubreporter/protocol.go: ff284fac134df158
+  meshsat-hub/internal/protocol/protocol.go: c316488144b71758
+
+owners:
+  - track: D (MeshSat)
+  - notify_on_drift: "#meshsat"
