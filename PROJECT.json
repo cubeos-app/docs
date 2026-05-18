@@ -1,0 +1,83 @@
+{
+  "slug": "cubeos",
+  "title": "CubeOS — self-hosted OS for Raspberry Pi, ARM64 SBCs, and x86/amd64",
+  "youtrack_prefix": "CUBEOS",
+  "youtrack_disambiguator": "project: CUBEOS — see roadmap §4 'The Four Tracks' for Track A/B/C/D scoping",
+  "matrix_room": "!iXTnQsFJahUquYPDdG:matrix.nuclearlighters.net",
+  "primary_language": "markdown",
+  "test_command": "true",
+  "lint_command": "true",
+  "build_command": "true",
+  "ci_pipeline": ".gitlab-ci.yml",
+  "spec_home": true,
+  "spec_home_note": "This repo (docs/, project 16) is the canonical spec home for the CubeOS project as a whole. Component-level repos (api, dashboard, hal, coreapps, releases, meshsat, meshsat-hub, meshsat-android, ...) each carry their own component-scoped PROJECT.json that references this one as parent_project.",
+  "component_repos": [
+    {"slug": "api",            "project_id": 13, "purpose": "Go REST API + Orchestrator + FlowEngine"},
+    {"slug": "dashboard",      "project_id": 14, "purpose": "Vue 3 frontend + Swarm GUI + Access Profile UI"},
+    {"slug": "docs",           "project_id": 16, "purpose": "this repo — user + architecture docs + spec home"},
+    {"slug": "coreapps",       "project_id": 19, "purpose": "Docker Swarm stack definitions for the canonical coreapp set"},
+    {"slug": "releases",       "project_id": 20, "purpose": "Packer image builder + Pi Imager manifest"},
+    {"slug": "hal",            "project_id": 22, "purpose": "Hardware Abstraction Layer (privileged container)"},
+    {"slug": "docsindex",      "project_id": 23, "purpose": "Local docs search index"},
+    {"slug": "website",        "project_id": 24, "purpose": "cubeos.app marketing site"},
+    {"slug": "demo",           "project_id": 25, "purpose": "demo.cubeos.app"},
+    {"slug": "dot-github",     "project_id": 26, "purpose": "GitHub org files"},
+    {"slug": "meshsat",        "project_id": 27, "purpose": "Track B — MeshSat Bridge (standalone Pi gateway)"},
+    {"slug": "meshsat-android",  "project_id": 31, "purpose": "Track B — MeshSat Android (companion mobile app)"},
+    {"slug": "meshsat-hub",    "project_id": 35, "purpose": "Track D — MeshSat Hub (multi-tenant cloud)"},
+    {"slug": "meshsat-website", "project_id": 36, "purpose": "Track B — meshsat.net marketing site + install"}
+  ],
+  "bounded_contexts": [
+    "boot",
+    "swarm",
+    "orchestrator",
+    "registry",
+    "network",
+    "hal",
+    "access-profiles",
+    "ota",
+    "imager",
+    "platforms",
+    "docs",
+    "ci",
+    "release"
+  ],
+  "max_parallel_workers": 3,
+  "max_loc_per_worker": 500,
+  "owners": [
+    "ufwtqkgz@meshsat.net"
+  ],
+  "risk_profile": "medium",
+  "gitlab_project_id": 16,
+  "release_workflow": "push-to-main-deploys-automatically (per-repo CI auto-deploys to Pi)",
+  "parallel_dev_exception": {
+    "allowed": true,
+    "workflow": "merge/<feature_id> short-lived branch + 1 MR per feature + auto-delete branch on merge; per-component-repo dispatch (planner-decompose fans out a docs/spec to component-repo child specs)",
+    "rationale": "CubeOS spans multiple repos. Worker contracts are single-repo, so cross-cutting features in docs/ must be decomposed into per-component child specs before worker dispatch."
+  },
+  "security_posture": "edge-deployed; minimal attack surface; SSH hardening + fail2ban + watchdog at OS level + X-HAL-Key ACL on HAL endpoints",
+  "current_release": "v0.2.0 (per roadmap v4; CGC confirms current api schema version)",
+  "current_schema_version": 27,
+  "_current_schema_version_note": "CGC-verified at api/internal/database/schema.go:13 CurrentSchemaVersion = 27 (2026-05-18). Roadmap dated 2026-02-28 says v24; the codebase has advanced since.",
+  "supported_platforms": [
+    "Raspberry Pi 5 (primary)",
+    "Raspberry Pi 4 (community-tested)",
+    "x86_64 LXC (Proxmox)",
+    "x86_64 bare-metal (community-validated 2026-Q1)",
+    "BananaPi (deferred by choice per roadmap §2)"
+  ],
+  "surfaces": {
+    "http_api": true,
+    "events": false,
+    "persistent_data": true
+  },
+  "_surfaces_note": "http_api=true because docs/architecture/07_API_CONTRACTS.md defines the API contract that api/ implements. persistent_data=true because docs/architecture/03_DATABASE_SCHEMA.md defines the schema. events=false at the project level — sub-repos (hal/, meshsat-hub/) have their own event surfaces.",
+  "source_documents": [
+    "/home/claude-runner/gitlab/products/cubeos/claude-context/roadmap/CUBEOS_PROJECT_ROADMAP_v4.md (canonical, dated 2026-02-28)",
+    "/home/claude-runner/gitlab/products/cubeos/claude-context/roadmap/CUBEOS_FULL_EXECUTION_PLAN_v4.md",
+    "docs/architecture/00_PROJECT_OVERVIEW.md through 13_ACCESS_PROFILES.md (14 docs)",
+    "docs/decisions/adr-ota-updates.md (extended in adr/0007-*)",
+    "/home/claude-runner/gitlab/products/cubeos/CLAUDE.md (cross-cutting rules)",
+    "claude-gateway/docs/sdd-audits/docs-cgc-2026-05-18.md (CGC audit anchoring this MR)"
+  ]
+}

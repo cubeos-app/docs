@@ -1,0 +1,67 @@
+{
+  "feature_id": "002-local-registry",
+  "parent_epic": "CUBEOS-REGISTRY",
+  "spec_revision": "1 (2026-05-18)",
+  "tasks": [
+    {
+      "id": "T-001",
+      "status": "pending",
+      "title": "Registry stack compose + Swarm deploy ordering",
+      "prompt": "FIRST: read spec/002-local-registry/{requirements.md, design.md, acceptance/registry.feature}. SECOND: add coreapps/registry/docker-compose.yml per REQ-200-203. localhost:5000 bind only. Persistent volume mounted to /cubeos/data/registry. Add to cubeos-init.sh boot ordering.",
+      "files_owned": [
+        "coreapps/registry/docker-compose.yml",
+        "coreapps/registry/config.yml"
+      ],
+      "acceptance_test": "ssh root@<pi-test-host> 'docker stack services registry | grep replicated && curl -s http://localhost:5000/v2/_catalog | jq .'",
+      "dependencies": [],
+      "parallelizable": true,
+      "bounded_context": "registry",
+      "requirement_ids": ["REQ-200", "REQ-201", "REQ-202", "REQ-203"],
+      "complexity": 3,
+      "risk_score": 0.3,
+      "max_wall_clock_minutes": 40,
+      "max_loc_delta": 200
+    },
+    {
+      "id": "T-002",
+      "status": "pending",
+      "title": "Registry API endpoints + dashboard widget + import action",
+      "prompt": "FIRST: read spec/002-local-registry/{requirements.md, design.md}. SECOND: extend api/internal/handlers/registry.go (CGC-verified exists) with GET /status (REQ-215) + POST /import (REQ-207/208). Pre-deploy hook validates compose images per REQ-211. Add dashboard/src/components/registry/RegistryStatusView.vue + ImportImageForm.vue (new components/registry/ feature group).",
+      "files_owned": [
+        "api/internal/handlers/registry.go",
+        "api/internal/handlers/registry_test.go",
+        "dashboard/src/components/registry/RegistryStatusView.vue",
+        "dashboard/src/components/registry/ImportImageForm.vue",
+        "dashboard/src/components/registry/index.js"
+      ],
+      "acceptance_test": "cd api && go test -v -run TestRegistry ./internal/handlers/",
+      "dependencies": ["T-001"],
+      "parallelizable": false,
+      "bounded_context": "registry",
+      "requirement_ids": ["REQ-207", "REQ-208", "REQ-209", "REQ-211", "REQ-215", "REQ-216", "REQ-217"],
+      "complexity": 5,
+      "risk_score": 0.4,
+      "max_wall_clock_minutes": 75,
+      "max_loc_delta": 900
+    },
+    {
+      "id": "T-003",
+      "status": "pending",
+      "title": "GC workflow extension + offline-mode pull guard",
+      "prompt": "FIRST: read spec/002-local-registry/{requirements.md, design.md, acceptance/registry.feature}. SECOND: extend api/internal/flowengine/workflows/registry_cache.go (CGC-verified exists) to include GC workflow per REQ-212-214. New activity in api/internal/flowengine/activities/registry.go for pull-guard per REQ-210. Pre-pull check enforces offline_hotspot mode.",
+      "files_owned": [
+        "api/internal/flowengine/workflows/registry_cache.go",
+        "api/internal/flowengine/activities/registry.go"
+      ],
+      "acceptance_test": "cd api && go test -v -run TestRegistryCache ./internal/flowengine/workflows/",
+      "dependencies": ["T-002"],
+      "parallelizable": false,
+      "bounded_context": "registry",
+      "requirement_ids": ["REQ-204", "REQ-210", "REQ-212", "REQ-213", "REQ-214"],
+      "complexity": 4,
+      "risk_score": 0.4,
+      "max_wall_clock_minutes": 50,
+      "max_loc_delta": 600
+    }
+  ]
+}

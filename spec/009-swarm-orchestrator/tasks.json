@@ -1,0 +1,80 @@
+{
+  "feature_id": "009-swarm-orchestrator",
+  "parent_epic": "CUBEOS-HYDRA-FIX",
+  "spec_revision": "1 (2026-05-18 — retrospective; CGC-verified)",
+  "tasks": [
+    {
+      "id": "T-001",
+      "status": "completed",
+      "title": "Orchestrator + SwarmManager + DockerManager + PortManager (triple-source) shipped",
+      "prompt": "(RETROSPECTIVE — completed Jan-Feb 2026 per roadmap.) CGC-verified shipped: api/internal/managers/orchestrator.go (type Orchestrator at line 27), swarm.go, docker.go, ports_new.go (PortManager with DB+Swarm+HAL validation per REQ-909).",
+      "files_owned": [
+        "api/internal/managers/orchestrator.go",
+        "api/internal/managers/orchestrator_test.go",
+        "api/internal/managers/swarm.go",
+        "api/internal/managers/docker.go",
+        "api/internal/managers/ports_new.go",
+        "api/internal/managers/ports_test.go"
+      ],
+      "acceptance_test": "cd api && go test -v -run TestOrchestrator ./internal/managers/ && go test -v -run TestPortManager ./internal/managers/",
+      "dependencies": [],
+      "parallelizable": true,
+      "bounded_context": "orchestrator",
+      "requirement_ids": ["REQ-900", "REQ-901", "REQ-902", "REQ-903", "REQ-904", "REQ-905", "REQ-909", "REQ-910", "REQ-911", "REQ-915"],
+      "complexity": 8,
+      "risk_score": 0.0,
+      "max_wall_clock_minutes": 180,
+      "max_loc_delta": 2200,
+      "completed_at": "2026-02-10"
+    },
+    {
+      "id": "T-002",
+      "status": "completed",
+      "title": "FlowEngine core + 12 workflows + 14 activities + compose transformation in activities",
+      "prompt": "(RETROSPECTIVE — completed Jan-Feb 2026.) CGC-verified shipped: api/internal/flowengine/engine.go + saga.go + step.go + store.go + registry.go + definition.go + progress.go + errors.go. 12 workflows under workflows/. 14 activities under activities/. Compose transformation is inside activities/appstore.go + app_install.go (NOT a managers/compose.go file).",
+      "files_owned": [
+        "api/internal/flowengine/engine.go",
+        "api/internal/flowengine/engine_test.go",
+        "api/internal/flowengine/saga.go",
+        "api/internal/flowengine/step.go",
+        "api/internal/flowengine/store.go",
+        "api/internal/flowengine/registry.go",
+        "api/internal/flowengine/definition.go",
+        "api/internal/flowengine/progress.go",
+        "api/internal/flowengine/errors.go"
+      ],
+      "acceptance_test": "cd api && go test -v ./internal/flowengine/...",
+      "dependencies": ["T-001"],
+      "parallelizable": false,
+      "bounded_context": "orchestrator",
+      "requirement_ids": ["REQ-906", "REQ-907", "REQ-908", "REQ-912", "REQ-913", "REQ-918", "REQ-919", "REQ-920"],
+      "complexity": 8,
+      "risk_score": 0.0,
+      "max_wall_clock_minutes": 180,
+      "max_loc_delta": 2400,
+      "completed_at": "2026-02-12"
+    },
+    {
+      "id": "T-003",
+      "status": "completed",
+      "title": "Dashboard Swarm GUI (components/swarm/) + workflows handler endpoint",
+      "prompt": "(RETROSPECTIVE — completed Feb 2026.) CGC-verified shipped: dashboard/src/components/swarm/SwarmOverview.vue + StackList.vue + index.js. api/internal/handlers/workflows.go.",
+      "files_owned": [
+        "dashboard/src/components/swarm/SwarmOverview.vue",
+        "dashboard/src/components/swarm/StackList.vue",
+        "dashboard/src/components/swarm/index.js",
+        "api/internal/handlers/workflows.go"
+      ],
+      "acceptance_test": "cd api && go test -v -run TestWorkflows ./internal/handlers/ && cd dashboard && npm run test -- Swarm",
+      "dependencies": ["T-002"],
+      "parallelizable": false,
+      "bounded_context": "orchestrator",
+      "requirement_ids": ["REQ-914", "REQ-916", "REQ-917"],
+      "complexity": 6,
+      "risk_score": 0.0,
+      "max_wall_clock_minutes": 100,
+      "max_loc_delta": 1300,
+      "completed_at": "2026-02-18"
+    }
+  ]
+}

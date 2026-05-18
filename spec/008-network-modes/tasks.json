@@ -1,0 +1,75 @@
+{
+  "feature_id": "008-network-modes",
+  "parent_epic": "CUBEOS-PHASE-6",
+  "spec_revision": "1 (2026-05-18 — retrospective; CGC-verified)",
+  "tasks": [
+    {
+      "id": "T-001",
+      "status": "completed",
+      "title": "Six-mode catalog + HAL appliers + per-mode iptables rules + WiFi credential handling",
+      "prompt": "(RETROSPECTIVE — completed Feb 2026.) Shipped artifacts CGC-verified: hal/internal/handlers/network.go + wifi_ap.go + firewall.go. Iptables rules constructed in code, NOT nftables config files. WiFi creds in /cubeos/config/secrets.env per REQ-815/816.",
+      "files_owned": [
+        "hal/internal/handlers/network.go",
+        "hal/internal/handlers/wifi_ap.go",
+        "hal/internal/handlers/firewall.go",
+        "hal/internal/handlers/network_wifi_saved.go",
+        "hal/internal/handlers/network_wifi_status.go"
+      ],
+      "acceptance_test": "cd hal && go test -v -run TestNetwork ./internal/handlers/ && go test -v -run TestWifiAP ./internal/handlers/",
+      "dependencies": [],
+      "parallelizable": true,
+      "bounded_context": "network",
+      "requirement_ids": ["REQ-800", "REQ-802", "REQ-807", "REQ-808", "REQ-809", "REQ-815", "REQ-816"],
+      "complexity": 6,
+      "risk_score": 0.0,
+      "max_wall_clock_minutes": 90,
+      "max_loc_delta": 1200,
+      "completed_at": "2026-02-15"
+    },
+    {
+      "id": "T-002",
+      "status": "completed",
+      "title": "network_mode_switch workflow + REST handler + persistence + boot-time restore",
+      "prompt": "(RETROSPECTIVE — completed Feb 2026.) Shipped CGC-verified: api/internal/flowengine/workflows/network_mode_switch.go + workflows/wifi_client_switch.go, activities/network.go + activities/wifi_client.go, handlers/network.go.",
+      "files_owned": [
+        "api/internal/flowengine/workflows/network_mode_switch.go",
+        "api/internal/flowengine/workflows/wifi_client_switch.go",
+        "api/internal/flowengine/activities/network.go",
+        "api/internal/flowengine/activities/wifi_client.go",
+        "api/internal/handlers/network.go",
+        "api/internal/database/migrations.go"
+      ],
+      "acceptance_test": "cd api && go test -v -run TestNetworkModeSwitch ./internal/flowengine/workflows/ && go test -v -run TestNetwork ./internal/handlers/",
+      "dependencies": ["T-001"],
+      "parallelizable": false,
+      "bounded_context": "network",
+      "requirement_ids": ["REQ-801", "REQ-803", "REQ-804", "REQ-805", "REQ-810", "REQ-811", "REQ-812", "REQ-813"],
+      "complexity": 7,
+      "risk_score": 0.0,
+      "max_wall_clock_minutes": 110,
+      "max_loc_delta": 1400,
+      "completed_at": "2026-02-20"
+    },
+    {
+      "id": "T-003",
+      "status": "pending",
+      "title": "Dashboard mode-picker + WiFi-credential form + WebSocket progress + regression suite",
+      "prompt": "FIRST: read spec/008-network-modes/{requirements.md, design.md, acceptance/network-modes.feature}. SECOND: add dashboard/src/components/settings/NetworkModePanel.vue (next to WiFiInterfacesPanel.vue CGC-verified). WiFi credential form per REQ-814. WebSocket subscriber to /api/v1/system/events for mode-switch progress per REQ-806/820/821. Regression script per REQ-817/818.",
+      "files_owned": [
+        "dashboard/src/components/settings/NetworkModePanel.vue",
+        "dashboard/src/components/settings/WifiCredentialForm.vue",
+        "dashboard/src/stores/network.js",
+        "scripts/network-mode-regression.sh"
+      ],
+      "acceptance_test": "bash scripts/network-mode-regression.sh",
+      "dependencies": ["T-002"],
+      "parallelizable": false,
+      "bounded_context": "network",
+      "requirement_ids": ["REQ-806", "REQ-814", "REQ-817", "REQ-818", "REQ-819", "REQ-820", "REQ-821"],
+      "complexity": 5,
+      "risk_score": 0.4,
+      "max_wall_clock_minutes": 80,
+      "max_loc_delta": 1000
+    }
+  ]
+}

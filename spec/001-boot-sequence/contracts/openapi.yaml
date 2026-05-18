@@ -1,0 +1,68 @@
+openapi: 3.0.3
+info:
+  title: CubeOS — boot-state introspection API (subset)
+  version: 0.2.0
+  description: |
+    OpenAPI subset for the project-level boot-sequence spec (spec/001 REQ-114).
+    The full CubeOS API spec lives at /swagger.json in api/.
+servers:
+  - url: https://cubeos.cube/api/v1
+paths:
+  /system/boot:
+    get:
+      summary: Get current boot state
+      operationId: getSystemBoot
+      responses:
+        '200':
+          description: Boot state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BootState'
+components:
+  schemas:
+    BootState:
+      type: object
+      required: [phase, started_at, coreapps]
+      properties:
+        phase:
+          type: string
+          enum: [first_boot, recovery_boot, complete, recovery_wizard]
+        started_at: {type: string, pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.*$"}
+        completed_at:
+          type: string
+          pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.*$"
+          nullable: true
+        total_ms:
+          type: integer
+          minimum: 0
+          nullable: true
+        boot_budget_exceeded: {type: boolean}
+        active_profile:
+          type: string
+          enum: [standard, advanced, all_in_one]
+        active_mode:
+          type: string
+          enum: [offline_hotspot, wifi_router, wifi_bridge, android_tether, wifi_client, eth_client]
+        coreapps:
+          type: array
+          items:
+            type: object
+            required: [name, status]
+            properties:
+              name: {type: string}
+              status: {type: string, enum: [pending, starting, healthy, failed]}
+              started_at:
+                type: string
+                pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.*$"
+                nullable: true
+              completed_at:
+                type: string
+                pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.*$"
+                nullable: true
+              error:
+                type: string
+                nullable: true
+        failed_coreapps:
+          type: array
+          items: {type: string}

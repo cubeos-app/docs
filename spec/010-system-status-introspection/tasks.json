@@ -1,0 +1,69 @@
+{
+  "feature_id": "010-system-status-introspection",
+  "parent_epic": "CUBEOS-OBSERVABILITY",
+  "spec_revision": "1 (2026-05-18)",
+  "tasks": [
+    {
+      "id": "T-001",
+      "status": "pending",
+      "title": "Collectors + 10s cache + GET /system/status + /system/hardware",
+      "prompt": "FIRST: read spec/010-system-status-introspection/{requirements.md, design.md, acceptance/status.feature}. SECOND: add api/internal/managers/system_collectors.go sampling /proc, vcgencmd, HAL probes every 5s into in-memory cache. Add handlers/system_status.go + handlers/system_hardware.go with full Swagger per Article XII + WebSocket push on hardware change.",
+      "files_owned": [
+        "api/internal/managers/system_collectors.go",
+        "api/internal/handlers/system_status.go",
+        "api/internal/handlers/system_hardware.go",
+        "api/internal/handlers/system_status_test.go"
+      ],
+      "acceptance_test": "cd api && make verify-routes && go test -v -run TestSystemStatus ./internal/handlers/",
+      "dependencies": [],
+      "parallelizable": true,
+      "bounded_context": "ci",
+      "requirement_ids": ["REQ-1000", "REQ-1001", "REQ-1002", "REQ-1011", "REQ-1012", "REQ-1017", "REQ-1018"],
+      "complexity": 6,
+      "risk_score": 0.4,
+      "max_wall_clock_minutes": 90,
+      "max_loc_delta": 1100
+    },
+    {
+      "id": "T-002",
+      "status": "pending",
+      "title": "Health probes + GET /system/health + audit-log search + boot history",
+      "prompt": "FIRST: read spec/010-system-status-introspection/{requirements.md, design.md}. SECOND: implement health probes per design. handlers/system_health.go, system_audit.go, system_boot_history.go, system_stack_resources.go (or extend apps.go).",
+      "files_owned": [
+        "api/internal/handlers/system_health.go",
+        "api/internal/handlers/system_audit.go",
+        "api/internal/handlers/system_boot_history.go",
+        "api/internal/handlers/system_stack_resources.go"
+      ],
+      "acceptance_test": "cd api && go test -v -run TestSystemHealth ./internal/handlers/ && go test -v -run TestSystemAudit ./internal/handlers/",
+      "dependencies": ["T-001"],
+      "parallelizable": false,
+      "bounded_context": "ci",
+      "requirement_ids": ["REQ-1003", "REQ-1004", "REQ-1005", "REQ-1006", "REQ-1008", "REQ-1009", "REQ-1010"],
+      "complexity": 7,
+      "risk_score": 0.5,
+      "max_wall_clock_minutes": 110,
+      "max_loc_delta": 1300
+    },
+    {
+      "id": "T-003",
+      "status": "pending",
+      "title": "cubeos-cli system commands + dashboard sparklines + Prometheus exporter",
+      "prompt": "FIRST: read spec/010-system-status-introspection/{requirements.md, design.md}. SECOND: cubeos-cli/cmd/system.go (separate cli repo) per REQ-1013/1014. Dashboard sparkline widget polling /system/stacks/*/resources per REQ-1007. Prometheus /metrics endpoint behind feature flag per REQ-1015/1016.",
+      "files_owned": [
+        "cubeos-cli/cmd/system.go",
+        "dashboard/src/components/dashboard/ResourceSparkline.vue",
+        "api/internal/handlers/metrics.go"
+      ],
+      "acceptance_test": "cd api && go test -v -run TestMetricsExporter ./internal/handlers/",
+      "dependencies": ["T-002"],
+      "parallelizable": false,
+      "bounded_context": "ci",
+      "requirement_ids": ["REQ-1007", "REQ-1013", "REQ-1014", "REQ-1015", "REQ-1016"],
+      "complexity": 5,
+      "risk_score": 0.4,
+      "max_wall_clock_minutes": 80,
+      "max_loc_delta": 1000
+    }
+  ]
+}

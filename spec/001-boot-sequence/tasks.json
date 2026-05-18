@@ -1,0 +1,67 @@
+{
+  "feature_id": "001-boot-sequence",
+  "parent_epic": "CUBEOS-BOOT",
+  "spec_revision": "1 (2026-05-18 — CGC-first authoring)",
+  "tasks": [
+    {
+      "id": "T-001",
+      "status": "pending",
+      "title": "cubeos-init.service + first-boot detection + swarm init",
+      "prompt": "FIRST: read spec/001-boot-sequence/{requirements.md, design.md, acceptance/boot.feature}. SECOND: this is a cross-repo feature — work goes in releases/ (image-baked systemd unit) and shell scripts that handle first-boot detection + swarm init. Parallel-dev planner will fan this out to child specs in releases/ before dispatch.",
+      "files_owned": [
+        "releases/cubeos-init/cubeos-init.service",
+        "releases/cubeos-init/cubeos-init.sh"
+      ],
+      "acceptance_test": "ssh root@<pi-test-host> 'systemctl status cubeos-init.service && cat /cubeos/data/audit.log | tail -1 | jq .event' returns 'boot-complete'",
+      "dependencies": [],
+      "parallelizable": true,
+      "bounded_context": "boot",
+      "requirement_ids": ["REQ-100", "REQ-101", "REQ-102", "REQ-103", "REQ-105", "REQ-108", "REQ-109", "REQ-110", "REQ-111", "REQ-117", "REQ-120"],
+      "complexity": 6,
+      "risk_score": 0.7,
+      "max_wall_clock_minutes": 90,
+      "max_loc_delta": 800
+    },
+    {
+      "id": "T-002",
+      "status": "pending",
+      "title": "Boot-state API (GET /api/v1/system/boot) + audit-log writer",
+      "prompt": "FIRST: read spec/001-boot-sequence/{requirements.md, design.md}. SECOND: add api/internal/handlers/system_boot.go with GET /api/v1/system/boot per REQ-114. Full Swagger annotations per Article XII. Add to api/cmd/cubeos-api/main.go route registration. Test in api/internal/handlers/system_boot_test.go. Update Swagger spec; run make verify-routes.",
+      "files_owned": [
+        "api/internal/handlers/system_boot.go",
+        "api/internal/handlers/system_boot_test.go",
+        "api/cmd/cubeos-api/main.go"
+      ],
+      "acceptance_test": "cd api && make verify-routes && go test -v -run TestSystemBoot ./internal/handlers/",
+      "dependencies": ["T-001"],
+      "parallelizable": false,
+      "bounded_context": "boot",
+      "requirement_ids": ["REQ-114", "REQ-120"],
+      "complexity": 4,
+      "risk_score": 0.3,
+      "max_wall_clock_minutes": 50,
+      "max_loc_delta": 600
+    },
+    {
+      "id": "T-003",
+      "status": "pending",
+      "title": "Boot-progress + recovery-wizard Vue components (under existing dashboard/src/components/wizard/)",
+      "prompt": "FIRST: read spec/001-boot-sequence/{requirements.md, design.md, acceptance/boot.feature}. SECOND: add components under dashboard/src/components/boot/ (new feature group alongside wizard/, services/, settings/, swarm/). BootProgressView.vue polls /api/v1/system/boot every 2s per REQ-115. RecoveryWizardView.vue handles DB-corruption case per REQ-117. SlowBootBanner.vue when total_ms > 90000 per REQ-112/113. Reuse FirstBootWizard.vue pattern (CGC-verified at dashboard/src/components/wizard/FirstBootWizard.vue).",
+      "files_owned": [
+        "dashboard/src/components/boot/BootProgressView.vue",
+        "dashboard/src/components/boot/RecoveryWizardView.vue",
+        "dashboard/src/components/boot/SlowBootBanner.vue",
+        "dashboard/src/components/boot/index.js"
+      ],
+      "acceptance_test": "cd dashboard && npm run test -- boot.spec.js",
+      "dependencies": ["T-002"],
+      "parallelizable": false,
+      "bounded_context": "boot",
+      "requirement_ids": ["REQ-106", "REQ-107", "REQ-112", "REQ-113", "REQ-115", "REQ-117"],
+      "complexity": 5,
+      "risk_score": 0.4,
+      "max_wall_clock_minutes": 70,
+      "max_loc_delta": 900
+    }
+  ]
+}

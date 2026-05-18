@@ -1,0 +1,70 @@
+{
+  "feature_id": "007-ap-expansion-aio",
+  "parent_epic": "CUBEOS-PHASE-12",
+  "spec_revision": "1 (2026-05-18)",
+  "tasks": [
+    {
+      "id": "T-001",
+      "status": "pending",
+      "title": "AIO interface selector API + dashboard UI + dual-WiFi mutual exclusion",
+      "prompt": "FIRST: read spec/007-ap-expansion-aio/{requirements.md, design.md, acceptance/ap-aio.feature}. SECOND: add api/internal/handlers/network_aio.go for managed-interface selector endpoints per REQ-700/701/702/703. Extend dashboard/src/components/settings/WiFiInterfacesPanel.vue (CGC-verified exists). Enforce managed != uplink mutual exclusion per REQ-704-706.",
+      "files_owned": [
+        "api/internal/handlers/network_aio.go",
+        "api/internal/handlers/network_aio_test.go",
+        "dashboard/src/components/settings/WiFiInterfacesPanel.vue"
+      ],
+      "acceptance_test": "cd api && make verify-routes && go test -v -run TestNetworkAIO ./internal/handlers/",
+      "dependencies": [],
+      "parallelizable": true,
+      "bounded_context": "network",
+      "requirement_ids": ["REQ-700", "REQ-701", "REQ-702", "REQ-703", "REQ-704", "REQ-705", "REQ-706"],
+      "complexity": 5,
+      "risk_score": 0.4,
+      "max_wall_clock_minutes": 75,
+      "max_loc_delta": 800
+    },
+    {
+      "id": "T-002",
+      "status": "pending",
+      "title": "Local CA generation + per-cert issuer + NPM TLS wiring + auto-renewal workflow",
+      "prompt": "FIRST: read spec/007-ap-expansion-aio/{requirements.md, design.md, acceptance/ap-aio.feature}. SECOND: implement hal/internal/handlers/security_ca.go to generate CA on first boot per REQ-707/708. Wire NPM to consume cubeos.cube cert per REQ-709. Add api/internal/flowengine/workflows/cert_renewal.go for 30d-before-expiry renewal per REQ-713. Expose GET /api/v1/security/ca-cert per REQ-710. POST /security/ca-cert/rotate per REQ-714/715/716.",
+      "files_owned": [
+        "hal/internal/handlers/security_ca.go",
+        "hal/internal/handlers/security_ca_test.go",
+        "api/internal/handlers/security_cacert.go",
+        "api/internal/flowengine/workflows/cert_renewal.go",
+        "coreapps/npm/cubeos-cube-vhost.conf"
+      ],
+      "acceptance_test": "ssh root@<pi-test> 'openssl s_client -showcerts -connect cubeos.cube:443 < /dev/null 2>/dev/null | openssl x509 -noout -subject | grep cubeos.cube'",
+      "dependencies": ["T-001"],
+      "parallelizable": false,
+      "bounded_context": "hal",
+      "requirement_ids": ["REQ-707", "REQ-708", "REQ-709", "REQ-710", "REQ-713", "REQ-714", "REQ-715", "REQ-716"],
+      "complexity": 7,
+      "risk_score": 0.6,
+      "max_wall_clock_minutes": 110,
+      "max_loc_delta": 1100
+    },
+    {
+      "id": "T-003",
+      "status": "pending",
+      "title": "Trust-CA landing + per-OS install guide + mDNS announcer",
+      "prompt": "FIRST: read spec/007-ap-expansion-aio/{requirements.md, design.md, acceptance/ap-aio.feature}. SECOND: add dashboard/src/components/wizard/TrustCAWizard.vue (alongside existing FirstBootWizard.vue) for /trust-ca route per REQ-711/712/717/718. Implement hal/internal/handlers/mdns_announce.go publishing _cubeos-ca._tcp per REQ-719/720.",
+      "files_owned": [
+        "dashboard/src/components/wizard/TrustCAWizard.vue",
+        "dashboard/src/components/wizard/CACertQR.vue",
+        "hal/internal/handlers/mdns_announce.go",
+        "hal/internal/handlers/mdns_announce_test.go"
+      ],
+      "acceptance_test": "cd dashboard && npm run test -- TrustCAWizard && cd hal && go test -v -run TestMDNS ./internal/handlers/",
+      "dependencies": ["T-002"],
+      "parallelizable": false,
+      "bounded_context": "hal",
+      "requirement_ids": ["REQ-711", "REQ-712", "REQ-717", "REQ-718", "REQ-719", "REQ-720"],
+      "complexity": 5,
+      "risk_score": 0.4,
+      "max_wall_clock_minutes": 80,
+      "max_loc_delta": 900
+    }
+  ]
+}

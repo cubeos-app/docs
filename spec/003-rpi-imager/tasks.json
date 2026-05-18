@@ -1,0 +1,48 @@
+{
+  "feature_id": "003-rpi-imager",
+  "parent_epic": "CUBEOS-IMAGER",
+  "spec_revision": "1 (2026-05-18)",
+  "tasks": [
+    {
+      "id": "T-001",
+      "status": "pending",
+      "title": "Manifest generator + CI integration in releases/",
+      "prompt": "FIRST: read spec/003-rpi-imager/{requirements.md, design.md, acceptance/imager.feature}. SECOND: implement releases/scripts/generate-pi-imager-manifest.sh that walks Packer outputs, computes sha256 + size per variant, assembles manifest JSON. Hook into releases CI on tag-build. Verify sha256 before upload.",
+      "files_owned": [
+        "releases/scripts/generate-pi-imager-manifest.sh",
+        "releases/scripts/upload-manifest.sh",
+        "releases/scripts/verify-manifest.sh",
+        "releases/manifests/pi-imager-template.json"
+      ],
+      "acceptance_test": "cd releases && shellcheck scripts/generate-pi-imager-manifest.sh && bash scripts/generate-pi-imager-manifest.sh --test-fixtures && jq -e '.subitems | length >= 5' tmp/manifest.json",
+      "dependencies": [],
+      "parallelizable": true,
+      "bounded_context": "release",
+      "requirement_ids": ["REQ-300", "REQ-301", "REQ-302", "REQ-303", "REQ-309", "REQ-310", "REQ-313", "REQ-314", "REQ-315"],
+      "complexity": 4,
+      "risk_score": 0.4,
+      "max_wall_clock_minutes": 60,
+      "max_loc_delta": 500
+    },
+    {
+      "id": "T-002",
+      "status": "pending",
+      "title": "Manifest signing + Pi Foundation submission tracking",
+      "prompt": "FIRST: read spec/003-rpi-imager/{requirements.md, design.md}. SECOND: implement releases/scripts/sign-manifest.sh using the CubeOS release key from CI variables. (REQ-311) ECDSA sign + publish .sig alongside manifest. (REQ-307/308) Operational task: submit URL to Pi Foundation. Track in YouTrack CUBEOS-*.",
+      "files_owned": [
+        "releases/scripts/sign-manifest.sh",
+        "releases/scripts/verify-signature.sh",
+        "releases/docs/manifest-signing.md"
+      ],
+      "acceptance_test": "cd releases && bash scripts/sign-manifest.sh tmp/manifest.json && bash scripts/verify-signature.sh tmp/manifest.json tmp/manifest.json.sig",
+      "dependencies": ["T-001"],
+      "parallelizable": false,
+      "bounded_context": "release",
+      "requirement_ids": ["REQ-304", "REQ-305", "REQ-306", "REQ-307", "REQ-308", "REQ-311", "REQ-312"],
+      "complexity": 3,
+      "risk_score": 0.3,
+      "max_wall_clock_minutes": 35,
+      "max_loc_delta": 200
+    }
+  ]
+}
