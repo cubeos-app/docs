@@ -1,13 +1,14 @@
 {
   "feature_id": "008-network-modes",
+  "_cgc_verified_at": "2026-05-18",
   "parent_epic": "CUBEOS-PHASE-6",
-  "spec_revision": "1 (2026-05-18 — retrospective; CGC-verified)",
+  "spec_revision": "1 (2026-05-18 \u2014 retrospective; CGC-verified)",
   "tasks": [
     {
       "id": "T-001",
-      "status": "completed",
+      "status": "pending",
       "title": "Six-mode catalog + HAL appliers + per-mode iptables rules + WiFi credential handling",
-      "prompt": "(RETROSPECTIVE — completed Feb 2026.) Shipped artifacts CGC-verified: hal/internal/handlers/network.go + wifi_ap.go + firewall.go. Iptables rules constructed in code, NOT nftables config files. WiFi creds in /cubeos/config/secrets.env per REQ-815/816.",
+      "prompt": "(RETROSPECTIVE \u2014 completed Feb 2026.) Shipped artifacts CGC-verified: hal/internal/handlers/network.go + wifi_ap.go + firewall.go. Iptables rules constructed in code, NOT nftables config files. WiFi creds in /cubeos/config/secrets.env per REQ-815/816.",
       "files_owned": [
         "hal/internal/handlers/network.go",
         "hal/internal/handlers/wifi_ap.go",
@@ -19,18 +20,30 @@
       "dependencies": [],
       "parallelizable": true,
       "bounded_context": "network",
-      "requirement_ids": ["REQ-800", "REQ-802", "REQ-807", "REQ-808", "REQ-809", "REQ-815", "REQ-816"],
+      "requirement_ids": [
+        "REQ-800",
+        "REQ-802",
+        "REQ-807",
+        "REQ-808",
+        "REQ-809",
+        "REQ-815",
+        "REQ-816"
+      ],
       "complexity": 6,
       "risk_score": 0.0,
       "max_wall_clock_minutes": 90,
       "max_loc_delta": 1200,
-      "completed_at": "2026-02-15"
+      "completed_at": "2026-02-15",
+      "_status_note": "Per the validator C18 gate: a docs/ project-level task cannot have status=completed with cross-repo files_owned because the docs/ repo doesn't own those files. The underlying functionality IS shipped (see sister repos for the actual retrospective task status). This task tracks the cross-repo coordination, not the implementation.",
+      "_cross_repo_completed_in": [
+        "hal"
+      ]
     },
     {
       "id": "T-002",
-      "status": "completed",
+      "status": "pending",
       "title": "network_mode_switch workflow + REST handler + persistence + boot-time restore",
-      "prompt": "(RETROSPECTIVE — completed Feb 2026.) Shipped CGC-verified: api/internal/flowengine/workflows/network_mode_switch.go + workflows/wifi_client_switch.go, activities/network.go + activities/wifi_client.go, handlers/network.go.",
+      "prompt": "(RETROSPECTIVE \u2014 completed Feb 2026.) Shipped CGC-verified: api/internal/flowengine/workflows/network_mode_switch.go + workflows/wifi_client_switch.go, activities/network.go + activities/wifi_client.go, handlers/network.go.",
       "files_owned": [
         "api/internal/flowengine/workflows/network_mode_switch.go",
         "api/internal/flowengine/workflows/wifi_client_switch.go",
@@ -40,15 +53,30 @@
         "api/internal/database/migrations.go"
       ],
       "acceptance_test": "cd api && go test -v -run TestNetworkModeSwitch ./internal/flowengine/workflows/ && go test -v -run TestNetwork ./internal/handlers/",
-      "dependencies": ["T-001"],
+      "dependencies": [
+        "T-001"
+      ],
       "parallelizable": false,
       "bounded_context": "network",
-      "requirement_ids": ["REQ-801", "REQ-803", "REQ-804", "REQ-805", "REQ-810", "REQ-811", "REQ-812", "REQ-813"],
+      "requirement_ids": [
+        "REQ-801",
+        "REQ-803",
+        "REQ-804",
+        "REQ-805",
+        "REQ-810",
+        "REQ-811",
+        "REQ-812",
+        "REQ-813"
+      ],
       "complexity": 7,
       "risk_score": 0.0,
       "max_wall_clock_minutes": 110,
       "max_loc_delta": 1400,
-      "completed_at": "2026-02-20"
+      "completed_at": "2026-02-20",
+      "_status_note": "Per the validator C18 gate: a docs/ project-level task cannot have status=completed with cross-repo files_owned because the docs/ repo doesn't own those files. The underlying functionality IS shipped (see sister repos for the actual retrospective task status). This task tracks the cross-repo coordination, not the implementation.",
+      "_cross_repo_completed_in": [
+        "api"
+      ]
     },
     {
       "id": "T-003",
@@ -62,10 +90,20 @@
         "scripts/network-mode-regression.sh"
       ],
       "acceptance_test": "bash scripts/network-mode-regression.sh",
-      "dependencies": ["T-002"],
+      "dependencies": [
+        "T-002"
+      ],
       "parallelizable": false,
       "bounded_context": "network",
-      "requirement_ids": ["REQ-806", "REQ-814", "REQ-817", "REQ-818", "REQ-819", "REQ-820", "REQ-821"],
+      "requirement_ids": [
+        "REQ-806",
+        "REQ-814",
+        "REQ-817",
+        "REQ-818",
+        "REQ-819",
+        "REQ-820",
+        "REQ-821"
+      ],
       "complexity": 5,
       "risk_score": 0.4,
       "max_wall_clock_minutes": 80,

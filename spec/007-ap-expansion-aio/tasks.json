@@ -1,5 +1,6 @@
 {
   "feature_id": "007-ap-expansion-aio",
+  "_cgc_verified_at": "2026-05-18",
   "parent_epic": "CUBEOS-PHASE-12",
   "spec_revision": "1 (2026-05-18)",
   "tasks": [
@@ -17,7 +18,15 @@
       "dependencies": [],
       "parallelizable": true,
       "bounded_context": "network",
-      "requirement_ids": ["REQ-700", "REQ-701", "REQ-702", "REQ-703", "REQ-704", "REQ-705", "REQ-706"],
+      "requirement_ids": [
+        "REQ-700",
+        "REQ-701",
+        "REQ-702",
+        "REQ-703",
+        "REQ-704",
+        "REQ-705",
+        "REQ-706"
+      ],
       "complexity": 5,
       "risk_score": 0.4,
       "max_wall_clock_minutes": 75,
@@ -36,10 +45,21 @@
         "coreapps/npm/cubeos-cube-vhost.conf"
       ],
       "acceptance_test": "ssh root@<pi-test> 'openssl s_client -showcerts -connect cubeos.cube:443 < /dev/null 2>/dev/null | openssl x509 -noout -subject | grep cubeos.cube'",
-      "dependencies": ["T-001"],
+      "dependencies": [
+        "T-001"
+      ],
       "parallelizable": false,
       "bounded_context": "hal",
-      "requirement_ids": ["REQ-707", "REQ-708", "REQ-709", "REQ-710", "REQ-713", "REQ-714", "REQ-715", "REQ-716"],
+      "requirement_ids": [
+        "REQ-707",
+        "REQ-708",
+        "REQ-709",
+        "REQ-710",
+        "REQ-713",
+        "REQ-714",
+        "REQ-715",
+        "REQ-716"
+      ],
       "complexity": 7,
       "risk_score": 0.6,
       "max_wall_clock_minutes": 110,
@@ -57,10 +77,19 @@
         "hal/internal/handlers/mdns_announce_test.go"
       ],
       "acceptance_test": "cd dashboard && npm run test -- TrustCAWizard && cd hal && go test -v -run TestMDNS ./internal/handlers/",
-      "dependencies": ["T-002"],
+      "dependencies": [
+        "T-002"
+      ],
       "parallelizable": false,
       "bounded_context": "hal",
-      "requirement_ids": ["REQ-711", "REQ-712", "REQ-717", "REQ-718", "REQ-719", "REQ-720"],
+      "requirement_ids": [
+        "REQ-711",
+        "REQ-712",
+        "REQ-717",
+        "REQ-718",
+        "REQ-719",
+        "REQ-720"
+      ],
       "complexity": 5,
       "risk_score": 0.4,
       "max_wall_clock_minutes": 80,

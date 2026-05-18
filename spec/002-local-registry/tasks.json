@@ -1,5 +1,6 @@
 {
   "feature_id": "002-local-registry",
+  "_cgc_verified_at": "2026-05-18",
   "parent_epic": "CUBEOS-REGISTRY",
   "spec_revision": "1 (2026-05-18)",
   "tasks": [
@@ -16,7 +17,12 @@
       "dependencies": [],
       "parallelizable": true,
       "bounded_context": "registry",
-      "requirement_ids": ["REQ-200", "REQ-201", "REQ-202", "REQ-203"],
+      "requirement_ids": [
+        "REQ-200",
+        "REQ-201",
+        "REQ-202",
+        "REQ-203"
+      ],
       "complexity": 3,
       "risk_score": 0.3,
       "max_wall_clock_minutes": 40,
@@ -35,10 +41,20 @@
         "dashboard/src/components/registry/index.js"
       ],
       "acceptance_test": "cd api && go test -v -run TestRegistry ./internal/handlers/",
-      "dependencies": ["T-001"],
+      "dependencies": [
+        "T-001"
+      ],
       "parallelizable": false,
       "bounded_context": "registry",
-      "requirement_ids": ["REQ-207", "REQ-208", "REQ-209", "REQ-211", "REQ-215", "REQ-216", "REQ-217"],
+      "requirement_ids": [
+        "REQ-207",
+        "REQ-208",
+        "REQ-209",
+        "REQ-211",
+        "REQ-215",
+        "REQ-216",
+        "REQ-217"
+      ],
       "complexity": 5,
       "risk_score": 0.4,
       "max_wall_clock_minutes": 75,
@@ -54,10 +70,18 @@
         "api/internal/flowengine/activities/registry.go"
       ],
       "acceptance_test": "cd api && go test -v -run TestRegistryCache ./internal/flowengine/workflows/",
-      "dependencies": ["T-002"],
+      "dependencies": [
+        "T-002"
+      ],
       "parallelizable": false,
       "bounded_context": "registry",
-      "requirement_ids": ["REQ-204", "REQ-210", "REQ-212", "REQ-213", "REQ-214"],
+      "requirement_ids": [
+        "REQ-204",
+        "REQ-210",
+        "REQ-212",
+        "REQ-213",
+        "REQ-214"
+      ],
       "complexity": 4,
       "risk_score": 0.4,
       "max_wall_clock_minutes": 50,

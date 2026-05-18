@@ -1,6 +1,6 @@
 Feature: CubeOS local registry (spec/002)
 
-  # Covers: REQ-200, REQ-201, REQ-203, REQ-207, REQ-208, REQ-210, REQ-211, REQ-212, REQ-213, REQ-214, REQ-215, REQ-216
+  # Covers: REQ-200, REQ-201, REQ-202, REQ-203, REQ-204, REQ-205, REQ-206, REQ-207, REQ-208, REQ-209, REQ-210, REQ-211, REQ-212, REQ-213, REQ-214, REQ-215, REQ-216, REQ-217
 
   Background:
     Given the local registry stack is deployed at localhost:5000

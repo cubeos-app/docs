@@ -1,6 +1,6 @@
 Feature: Swarm Orchestrator + FlowEngine (spec/009 — RETROSPECTIVE)
 
-  # Covers: REQ-900, REQ-901, REQ-903, REQ-904, REQ-905, REQ-907, REQ-908, REQ-911, REQ-912, REQ-913, REQ-915, REQ-916, REQ-917
+  # Covers: REQ-900, REQ-901, REQ-902, REQ-903, REQ-904, REQ-905, REQ-906, REQ-907, REQ-908, REQ-909, REQ-910, REQ-911, REQ-912, REQ-913, REQ-914, REQ-915, REQ-916, REQ-917, REQ-918, REQ-919, REQ-920
 
   Scenario: Direct Docker calls outside Orchestrator are forbidden
     When a developer adds a code path that calls `docker.NewClient()` outside managers/

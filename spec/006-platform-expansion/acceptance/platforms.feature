@@ -1,6 +1,6 @@
 Feature: Platform expansion (spec/006)
 
-  # Covers: REQ-600, REQ-601, REQ-603, REQ-604, REQ-605, REQ-606, REQ-607, REQ-608, REQ-609, REQ-610, REQ-611, REQ-613, REQ-615
+  # Covers: REQ-600, REQ-601, REQ-602, REQ-603, REQ-604, REQ-605, REQ-606, REQ-607, REQ-608, REQ-609, REQ-610, REQ-611, REQ-612, REQ-613, REQ-614, REQ-615
 
   Scenario: Proxmox helper script creates LXC
     Given a PVE 9 host with shell access

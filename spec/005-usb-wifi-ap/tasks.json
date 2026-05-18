@@ -1,5 +1,6 @@
 {
   "feature_id": "005-usb-wifi-ap",
+  "_cgc_verified_at": "2026-05-18",
   "parent_epic": "CUBEOS-PHASE-10",
   "spec_revision": "1 (2026-05-18)",
   "tasks": [
@@ -17,7 +18,12 @@
       "dependencies": [],
       "parallelizable": true,
       "bounded_context": "hal",
-      "requirement_ids": ["REQ-500", "REQ-501", "REQ-502", "REQ-509"],
+      "requirement_ids": [
+        "REQ-500",
+        "REQ-501",
+        "REQ-502",
+        "REQ-509"
+      ],
       "complexity": 5,
       "risk_score": 0.4,
       "max_wall_clock_minutes": 70,
@@ -26,8 +32,8 @@
     {
       "id": "T-002",
       "status": "pending",
-      "title": "api AP-interface selector + Schema v27→v28 + network-mode-switch workflow extension",
-      "prompt": "FIRST: read spec/005-usb-wifi-ap/{requirements.md, design.md, acceptance/usb-ap.feature}. SECOND: add api/internal/handlers/network_ap.go for /api/v1/network/ap-interfaces + /ap-interface + /ap-status per REQ-503/504/507/515. Extend api/internal/flowengine/workflows/network_mode_switch.go to handle ap_interface_role changes. Migration v27→v28: ALTER TABLE network_modes ADD COLUMN ap_interface_role (append-only per Article XIII).",
+      "title": "api AP-interface selector + Schema v27\u2192v28 + network-mode-switch workflow extension",
+      "prompt": "FIRST: read spec/005-usb-wifi-ap/{requirements.md, design.md, acceptance/usb-ap.feature}. SECOND: add api/internal/handlers/network_ap.go for /api/v1/network/ap-interfaces + /ap-interface + /ap-status per REQ-503/504/507/515. Extend api/internal/flowengine/workflows/network_mode_switch.go to handle ap_interface_role changes. Migration v27\u2192v28: ALTER TABLE network_modes ADD COLUMN ap_interface_role (append-only per Article XIII).",
       "files_owned": [
         "api/internal/handlers/network_ap.go",
         "api/internal/handlers/network_ap_test.go",
@@ -35,10 +41,22 @@
         "api/internal/flowengine/workflows/network_mode_switch.go"
       ],
       "acceptance_test": "cd api && make verify-routes && go test -v -run TestNetworkAP ./internal/handlers/",
-      "dependencies": ["T-001"],
+      "dependencies": [
+        "T-001"
+      ],
       "parallelizable": false,
       "bounded_context": "network",
-      "requirement_ids": ["REQ-503", "REQ-504", "REQ-505", "REQ-507", "REQ-508", "REQ-511", "REQ-512", "REQ-513", "REQ-515"],
+      "requirement_ids": [
+        "REQ-503",
+        "REQ-504",
+        "REQ-505",
+        "REQ-507",
+        "REQ-508",
+        "REQ-511",
+        "REQ-512",
+        "REQ-513",
+        "REQ-515"
+      ],
       "complexity": 6,
       "risk_score": 0.5,
       "max_wall_clock_minutes": 90,
@@ -54,10 +72,17 @@
         "dashboard/src/components/settings/APStatusBanner.vue"
       ],
       "acceptance_test": "cd dashboard && npm run test -- APInterfacePanel",
-      "dependencies": ["T-002"],
+      "dependencies": [
+        "T-002"
+      ],
       "parallelizable": false,
       "bounded_context": "network",
-      "requirement_ids": ["REQ-506", "REQ-510", "REQ-514", "REQ-516"],
+      "requirement_ids": [
+        "REQ-506",
+        "REQ-510",
+        "REQ-514",
+        "REQ-516"
+      ],
       "complexity": 4,
       "risk_score": 0.3,
       "max_wall_clock_minutes": 60,

@@ -1,13 +1,14 @@
 {
   "feature_id": "001-boot-sequence",
+  "_cgc_verified_at": "2026-05-18",
   "parent_epic": "CUBEOS-BOOT",
-  "spec_revision": "1 (2026-05-18 — CGC-first authoring)",
+  "spec_revision": "1 (2026-05-18 \u2014 CGC-first authoring)",
   "tasks": [
     {
       "id": "T-001",
       "status": "pending",
       "title": "cubeos-init.service + first-boot detection + swarm init",
-      "prompt": "FIRST: read spec/001-boot-sequence/{requirements.md, design.md, acceptance/boot.feature}. SECOND: this is a cross-repo feature — work goes in releases/ (image-baked systemd unit) and shell scripts that handle first-boot detection + swarm init. Parallel-dev planner will fan this out to child specs in releases/ before dispatch.",
+      "prompt": "FIRST: read spec/001-boot-sequence/{requirements.md, design.md, acceptance/boot.feature}. SECOND: this is a cross-repo feature \u2014 work goes in releases/ (image-baked systemd unit) and shell scripts that handle first-boot detection + swarm init. Parallel-dev planner will fan this out to child specs in releases/ before dispatch.",
       "files_owned": [
         "releases/cubeos-init/cubeos-init.service",
         "releases/cubeos-init/cubeos-init.sh"
@@ -16,7 +17,19 @@
       "dependencies": [],
       "parallelizable": true,
       "bounded_context": "boot",
-      "requirement_ids": ["REQ-100", "REQ-101", "REQ-102", "REQ-103", "REQ-105", "REQ-108", "REQ-109", "REQ-110", "REQ-111", "REQ-117", "REQ-120"],
+      "requirement_ids": [
+        "REQ-100",
+        "REQ-101",
+        "REQ-102",
+        "REQ-103",
+        "REQ-105",
+        "REQ-108",
+        "REQ-109",
+        "REQ-110",
+        "REQ-111",
+        "REQ-117",
+        "REQ-120"
+      ],
       "complexity": 6,
       "risk_score": 0.7,
       "max_wall_clock_minutes": 90,
@@ -33,10 +46,15 @@
         "api/cmd/cubeos-api/main.go"
       ],
       "acceptance_test": "cd api && make verify-routes && go test -v -run TestSystemBoot ./internal/handlers/",
-      "dependencies": ["T-001"],
+      "dependencies": [
+        "T-001"
+      ],
       "parallelizable": false,
       "bounded_context": "boot",
-      "requirement_ids": ["REQ-114", "REQ-120"],
+      "requirement_ids": [
+        "REQ-114",
+        "REQ-120"
+      ],
       "complexity": 4,
       "risk_score": 0.3,
       "max_wall_clock_minutes": 50,
@@ -54,10 +72,19 @@
         "dashboard/src/components/boot/index.js"
       ],
       "acceptance_test": "cd dashboard && npm run test -- boot.spec.js",
-      "dependencies": ["T-002"],
+      "dependencies": [
+        "T-002"
+      ],
       "parallelizable": false,
       "bounded_context": "boot",
-      "requirement_ids": ["REQ-106", "REQ-107", "REQ-112", "REQ-113", "REQ-115", "REQ-117"],
+      "requirement_ids": [
+        "REQ-106",
+        "REQ-107",
+        "REQ-112",
+        "REQ-113",
+        "REQ-115",
+        "REQ-117"
+      ],
       "complexity": 5,
       "risk_score": 0.4,
       "max_wall_clock_minutes": 70,

@@ -1,6 +1,6 @@
 Feature: USB WiFi AP selection (spec/005)
 
-  # Covers: REQ-500, REQ-501, REQ-502, REQ-503, REQ-504, REQ-505, REQ-506, REQ-507, REQ-508, REQ-510, REQ-514, REQ-516
+  # Covers: REQ-500, REQ-501, REQ-502, REQ-503, REQ-504, REQ-505, REQ-506, REQ-507, REQ-508, REQ-509, REQ-510, REQ-511, REQ-512, REQ-513, REQ-514, REQ-515, REQ-516
 
   Background:
     Given the Pi has onboard wlan0 AP-capable

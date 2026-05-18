@@ -1,5 +1,6 @@
 {
   "feature_id": "003-rpi-imager",
+  "_cgc_verified_at": "2026-05-18",
   "parent_epic": "CUBEOS-IMAGER",
   "spec_revision": "1 (2026-05-18)",
   "tasks": [
@@ -18,7 +19,17 @@
       "dependencies": [],
       "parallelizable": true,
       "bounded_context": "release",
-      "requirement_ids": ["REQ-300", "REQ-301", "REQ-302", "REQ-303", "REQ-309", "REQ-310", "REQ-313", "REQ-314", "REQ-315"],
+      "requirement_ids": [
+        "REQ-300",
+        "REQ-301",
+        "REQ-302",
+        "REQ-303",
+        "REQ-309",
+        "REQ-310",
+        "REQ-313",
+        "REQ-314",
+        "REQ-315"
+      ],
       "complexity": 4,
       "risk_score": 0.4,
       "max_wall_clock_minutes": 60,
@@ -35,10 +46,20 @@
         "releases/docs/manifest-signing.md"
       ],
       "acceptance_test": "cd releases && bash scripts/sign-manifest.sh tmp/manifest.json && bash scripts/verify-signature.sh tmp/manifest.json tmp/manifest.json.sig",
-      "dependencies": ["T-001"],
+      "dependencies": [
+        "T-001"
+      ],
       "parallelizable": false,
       "bounded_context": "release",
-      "requirement_ids": ["REQ-304", "REQ-305", "REQ-306", "REQ-307", "REQ-308", "REQ-311", "REQ-312"],
+      "requirement_ids": [
+        "REQ-304",
+        "REQ-305",
+        "REQ-306",
+        "REQ-307",
+        "REQ-308",
+        "REQ-311",
+        "REQ-312"
+      ],
       "complexity": 3,
       "risk_score": 0.3,
       "max_wall_clock_minutes": 35,

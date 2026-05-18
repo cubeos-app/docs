@@ -1,6 +1,6 @@
 Feature: CubeOS Pi Imager listing (spec/003)
 
-  # Covers: REQ-300, REQ-301, REQ-303, REQ-304, REQ-305, REQ-306, REQ-308, REQ-311, REQ-312, REQ-314, REQ-315
+  # Covers: REQ-300, REQ-301, REQ-302, REQ-303, REQ-304, REQ-305, REQ-306, REQ-307, REQ-308, REQ-309, REQ-310, REQ-311, REQ-312, REQ-313, REQ-314, REQ-315
 
   Background:
     Given the CubeOS release pipeline produces 5 image variants

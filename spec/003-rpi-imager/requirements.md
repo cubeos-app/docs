@@ -9,7 +9,7 @@ REQ-301: The system shall include SHA-256 digest, image-size, release-date, rele
 REQ-302: The system shall upload `pi-imager-manifest.json` to `get.cubeos.app/pi-imager-manifest.json` on every release.
 REQ-303: When a new image is published, the system shall verify the SHA-256 in the manifest matches the actual published artifact before exposing the new manifest version.
 REQ-304: When the operator opens Raspberry Pi Imager and selects "Other general-purpose OS → CubeOS", the system manifest shall list every published image variant.
-REQ-305: The system shall present human-readable names for each variant: "CubeOS Pi 5 (full)", "CubeOS Pi 5 (lite — no AI/ML)", etc.
+REQ-305: The system shall present a human-readable name for each variant in the form "CubeOS Pi 5 (full)" and "CubeOS Pi 5 (lite — no AI/ML)" — one name per published variant.
 REQ-306: While the user is downloading, the Pi Imager shall verify the SHA-256 against the manifest entry and abort on mismatch.
 REQ-307: The system shall submit the canonical manifest URL `https://get.cubeos.app/pi-imager-manifest.json` to the Raspberry Pi Foundation for catalog inclusion.
 REQ-308: The system shall maintain backward compatibility on the canonical manifest URL — the URL path shall not change.

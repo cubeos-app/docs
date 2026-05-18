@@ -1,5 +1,6 @@
 {
   "feature_id": "006-platform-expansion",
+  "_cgc_verified_at": "2026-05-18",
   "parent_epic": "CUBEOS-PHASE-11",
   "spec_revision": "1 (2026-05-18)",
   "tasks": [
@@ -17,7 +18,11 @@
       "dependencies": [],
       "parallelizable": true,
       "bounded_context": "platforms",
-      "requirement_ids": ["REQ-600", "REQ-601", "REQ-602"],
+      "requirement_ids": [
+        "REQ-600",
+        "REQ-601",
+        "REQ-602"
+      ],
       "complexity": 4,
       "risk_score": 0.4,
       "max_wall_clock_minutes": 60,
@@ -36,7 +41,11 @@
       "dependencies": [],
       "parallelizable": true,
       "bounded_context": "platforms",
-      "requirement_ids": ["REQ-603", "REQ-604", "REQ-605"],
+      "requirement_ids": [
+        "REQ-603",
+        "REQ-604",
+        "REQ-605"
+      ],
       "complexity": 6,
       "risk_score": 0.6,
       "max_wall_clock_minutes": 120,
@@ -54,10 +63,23 @@
         "scripts/platform-regression-x86.sh"
       ],
       "acceptance_test": "bash scripts/platform-regression-x86.sh && bash scripts/platform-regression-pi5.sh && bash scripts/platform-regression-lxc.sh",
-      "dependencies": ["T-002"],
+      "dependencies": [
+        "T-002"
+      ],
       "parallelizable": false,
       "bounded_context": "platforms",
-      "requirement_ids": ["REQ-606", "REQ-607", "REQ-608", "REQ-609", "REQ-610", "REQ-611", "REQ-612", "REQ-613", "REQ-614", "REQ-615"],
+      "requirement_ids": [
+        "REQ-606",
+        "REQ-607",
+        "REQ-608",
+        "REQ-609",
+        "REQ-610",
+        "REQ-611",
+        "REQ-612",
+        "REQ-613",
+        "REQ-614",
+        "REQ-615"
+      ],
       "complexity": 4,
       "risk_score": 0.3,
       "max_wall_clock_minutes": 80,

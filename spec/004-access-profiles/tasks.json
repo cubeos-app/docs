@@ -1,13 +1,14 @@
 {
   "feature_id": "004-access-profiles",
+  "_cgc_verified_at": "2026-05-18",
   "parent_epic": "CUBEOS-ACCESS-PROFILES",
-  "spec_revision": "1 (2026-05-18 — retrospective; CGC-verified)",
+  "spec_revision": "1 (2026-05-18 \u2014 retrospective; CGC-verified)",
   "tasks": [
     {
       "id": "T-001",
-      "status": "completed",
+      "status": "pending",
       "title": "Schema v21 access_profiles + REST handler + profile workflow shipped",
-      "prompt": "(RETROSPECTIVE — completed Feb 2026 per roadmap.) Shipped artifacts CGC-verified: api/internal/database/migrations.go (v20→v21 + v22→v23), api/internal/handlers/profiles.go, api/internal/flowengine/workflows/access_profile_switch.go, api/internal/flowengine/activities/access_profile.go, api/internal/handlers/access_profile_test_helpers.go.",
+      "prompt": "(RETROSPECTIVE \u2014 completed Feb 2026 per roadmap.) Shipped artifacts CGC-verified: api/internal/database/migrations.go (v20\u2192v21 + v22\u2192v23), api/internal/handlers/profiles.go, api/internal/flowengine/workflows/access_profile_switch.go, api/internal/flowengine/activities/access_profile.go, api/internal/handlers/access_profile_test_helpers.go.",
       "files_owned": [
         "api/internal/database/migrations.go",
         "api/internal/handlers/profiles.go",
@@ -19,33 +20,70 @@
       "dependencies": [],
       "parallelizable": true,
       "bounded_context": "access-profiles",
-      "requirement_ids": ["REQ-400", "REQ-401", "REQ-405", "REQ-406", "REQ-407", "REQ-408", "REQ-409", "REQ-410", "REQ-414", "REQ-415", "REQ-416", "REQ-417", "REQ-418", "REQ-419", "REQ-420", "REQ-421", "REQ-422", "REQ-423"],
+      "requirement_ids": [
+        "REQ-400",
+        "REQ-401",
+        "REQ-405",
+        "REQ-406",
+        "REQ-407",
+        "REQ-408",
+        "REQ-409",
+        "REQ-410",
+        "REQ-414",
+        "REQ-415",
+        "REQ-416",
+        "REQ-417",
+        "REQ-418",
+        "REQ-419",
+        "REQ-420",
+        "REQ-421",
+        "REQ-422",
+        "REQ-423"
+      ],
       "complexity": 7,
       "risk_score": 0.0,
       "max_wall_clock_minutes": 150,
       "max_loc_delta": 1800,
-      "completed_at": "2026-02-27"
+      "completed_at": "2026-02-27",
+      "_status_note": "Per the validator C18 gate: a docs/ project-level task cannot have status=completed with cross-repo files_owned because the docs/ repo doesn't own those files. The underlying functionality IS shipped (see sister repos for the actual retrospective task status). This task tracks the cross-repo coordination, not the implementation.",
+      "_cross_repo_completed_in": [
+        "api"
+      ]
     },
     {
       "id": "T-002",
-      "status": "completed",
+      "status": "pending",
       "title": "Profile-aware dashboard UI shipped (settings tab + progress modal + Swarm-GUI hide)",
-      "prompt": "(RETROSPECTIVE — completed Feb 2026 per roadmap.) Shipped CGC-verified components: dashboard/src/components/settings/AccessProfileSettings.vue, ProfileSwitchProgressModal.vue, ProfilesTab.vue. Swarm-GUI gating (REQ-412) hides components/swarm/SwarmOverview.vue + StackList.vue when profile=standard.",
+      "prompt": "(RETROSPECTIVE \u2014 completed Feb 2026 per roadmap.) Shipped CGC-verified components: dashboard/src/components/settings/AccessProfileSettings.vue, ProfileSwitchProgressModal.vue, ProfilesTab.vue. Swarm-GUI gating (REQ-412) hides components/swarm/SwarmOverview.vue + StackList.vue when profile=standard.",
       "files_owned": [
         "dashboard/src/components/settings/AccessProfileSettings.vue",
         "dashboard/src/components/settings/ProfileSwitchProgressModal.vue",
         "dashboard/src/components/settings/ProfilesTab.vue"
       ],
       "acceptance_test": "cd dashboard && npm run test -- AccessProfile",
-      "dependencies": ["T-001"],
+      "dependencies": [
+        "T-001"
+      ],
       "parallelizable": false,
       "bounded_context": "access-profiles",
-      "requirement_ids": ["REQ-402", "REQ-403", "REQ-404", "REQ-411", "REQ-412", "REQ-413", "REQ-424"],
+      "requirement_ids": [
+        "REQ-402",
+        "REQ-403",
+        "REQ-404",
+        "REQ-411",
+        "REQ-412",
+        "REQ-413",
+        "REQ-424"
+      ],
       "complexity": 5,
       "risk_score": 0.0,
       "max_wall_clock_minutes": 75,
       "max_loc_delta": 900,
-      "completed_at": "2026-02-27"
+      "completed_at": "2026-02-27",
+      "_status_note": "Per the validator C18 gate: a docs/ project-level task cannot have status=completed with cross-repo files_owned because the docs/ repo doesn't own those files. The underlying functionality IS shipped (see sister repos for the actual retrospective task status). This task tracks the cross-repo coordination, not the implementation.",
+      "_cross_repo_completed_in": [
+        "dashboard"
+      ]
     }
   ]
 }

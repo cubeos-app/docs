@@ -1,5 +1,6 @@
 {
   "feature_id": "010-system-status-introspection",
+  "_cgc_verified_at": "2026-05-18",
   "parent_epic": "CUBEOS-OBSERVABILITY",
   "spec_revision": "1 (2026-05-18)",
   "tasks": [
@@ -18,7 +19,15 @@
       "dependencies": [],
       "parallelizable": true,
       "bounded_context": "ci",
-      "requirement_ids": ["REQ-1000", "REQ-1001", "REQ-1002", "REQ-1011", "REQ-1012", "REQ-1017", "REQ-1018"],
+      "requirement_ids": [
+        "REQ-1000",
+        "REQ-1001",
+        "REQ-1002",
+        "REQ-1011",
+        "REQ-1012",
+        "REQ-1017",
+        "REQ-1018"
+      ],
       "complexity": 6,
       "risk_score": 0.4,
       "max_wall_clock_minutes": 90,
@@ -36,10 +45,20 @@
         "api/internal/handlers/system_stack_resources.go"
       ],
       "acceptance_test": "cd api && go test -v -run TestSystemHealth ./internal/handlers/ && go test -v -run TestSystemAudit ./internal/handlers/",
-      "dependencies": ["T-001"],
+      "dependencies": [
+        "T-001"
+      ],
       "parallelizable": false,
       "bounded_context": "ci",
-      "requirement_ids": ["REQ-1003", "REQ-1004", "REQ-1005", "REQ-1006", "REQ-1008", "REQ-1009", "REQ-1010"],
+      "requirement_ids": [
+        "REQ-1003",
+        "REQ-1004",
+        "REQ-1005",
+        "REQ-1006",
+        "REQ-1008",
+        "REQ-1009",
+        "REQ-1010"
+      ],
       "complexity": 7,
       "risk_score": 0.5,
       "max_wall_clock_minutes": 110,
@@ -56,10 +75,18 @@
         "api/internal/handlers/metrics.go"
       ],
       "acceptance_test": "cd api && go test -v -run TestMetricsExporter ./internal/handlers/",
-      "dependencies": ["T-002"],
+      "dependencies": [
+        "T-002"
+      ],
       "parallelizable": false,
       "bounded_context": "ci",
-      "requirement_ids": ["REQ-1007", "REQ-1013", "REQ-1014", "REQ-1015", "REQ-1016"],
+      "requirement_ids": [
+        "REQ-1007",
+        "REQ-1013",
+        "REQ-1014",
+        "REQ-1015",
+        "REQ-1016"
+      ],
       "complexity": 5,
       "risk_score": 0.4,
       "max_wall_clock_minutes": 80,

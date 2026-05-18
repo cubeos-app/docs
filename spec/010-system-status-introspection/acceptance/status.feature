@@ -1,6 +1,6 @@
 Feature: System status introspection (spec/010)
 
-  # Covers: REQ-1000, REQ-1001, REQ-1002, REQ-1003, REQ-1004, REQ-1005, REQ-1006, REQ-1007, REQ-1008, REQ-1009, REQ-1011, REQ-1012, REQ-1013, REQ-1014, REQ-1015, REQ-1017, REQ-1018
+  # Covers: REQ-1000, REQ-1001, REQ-1002, REQ-1003, REQ-1004, REQ-1005, REQ-1006, REQ-1007, REQ-1008, REQ-1009, REQ-1010, REQ-1011, REQ-1012, REQ-1013, REQ-1014, REQ-1015, REQ-1016, REQ-1017, REQ-1018
 
   Scenario: /system/status returns key metrics within 100 ms
     When the operator GETs /api/v1/system/status
